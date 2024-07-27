@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.housekeeping.mapper.SystemServicePersonnelMapper">
+    
+    <resultMap type="SystemServicePersonnel" id="SystemServicePersonnelResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="experience"    column="experience"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="location"    column="location"    />
+    </resultMap>
+
+    <sql id="selectSystemServicePersonnelVo">
+        select id, user_id, name, phone, email, experience, create_time, update_time, location from system_service_personnel
+    </sql>
+
+    <select id="selectSystemServicePersonnelList" parameterType="SystemServicePersonnel" resultMap="SystemServicePersonnelResult">
+        <include refid="selectSystemServicePersonnelVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSystemServicePersonnelById" parameterType="Long" resultMap="SystemServicePersonnelResult">
+        <include refid="selectSystemServicePersonnelVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSystemServicePersonnel" parameterType="SystemServicePersonnel" useGeneratedKeys="true" keyProperty="id">
+        insert into system_service_personnel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="experience != null">experience,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="location != null and location != ''">location,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="experience != null">#{experience},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="location != null and location != ''">#{location},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSystemServicePersonnel" parameterType="SystemServicePersonnel">
+        update system_service_personnel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="experience != null">experience = #{experience},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="location != null and location != ''">location = #{location},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSystemServicePersonnelById" parameterType="Long">
+        delete from system_service_personnel where id = #{id}
+    </delete>
+
+    <delete id="deleteSystemServicePersonnelByIds" parameterType="String">
+        delete from system_service_personnel where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.housekeeping.mapper.SystemServicePostMapper">
+    
+    <resultMap type="SystemServicePost" id="SystemServicePostResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="title"    column="title"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="location"    column="location"    />
+    </resultMap>
+
+    <sql id="selectSystemServicePostVo">
+        select id, user_id, category_id, title, description, price, create_time, update_time, location from system_service_post
+    </sql>
+
+    <select id="selectSystemServicePostList" parameterType="SystemServicePost" resultMap="SystemServicePostResult">
+        <include refid="selectSystemServicePostVo"/>
+        <where>  
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSystemServicePostById" parameterType="Long" resultMap="SystemServicePostResult">
+        <include refid="selectSystemServicePostVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSystemServicePost" parameterType="SystemServicePost" useGeneratedKeys="true" keyProperty="id">
+        insert into system_service_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="price != null">price,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="location != null and location != ''">location,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="price != null">#{price},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="location != null and location != ''">#{location},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSystemServicePost" parameterType="SystemServicePost">
+        update system_service_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="location != null and location != ''">location = #{location},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSystemServicePostById" parameterType="Long">
+        delete from system_service_post where id = #{id}
+    </delete>
+
+    <delete id="deleteSystemServicePostByIds" parameterType="String">
+        delete from system_service_post where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
