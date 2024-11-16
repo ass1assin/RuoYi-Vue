@@ -8,9 +8,9 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 服务发布对象 system_service_post
- * 
+ *
  * @author ruoyi
- * @date 2024-07-22
+ * @date 2024-07-27
  */
 public class SystemServicePost extends BaseEntity
 {
@@ -20,7 +20,6 @@ public class SystemServicePost extends BaseEntity
     private Long id;
 
     /** 发布用户ID */
-    @Excel(name = "发布用户ID")
     private Long userId;
 
     /** 服务类别ID */
@@ -43,82 +42,130 @@ public class SystemServicePost extends BaseEntity
     @Excel(name = "服务地点")
     private String location;
 
-    public void setId(Long id) 
+    /** 城市ID */
+    @Excel(name = "城市ID")
+    private Long cityId;
+
+    /** 图片地址 */
+    @Excel(name = "图片地址")
+    private String imageUrl;
+
+    private String categoryName;
+
+    private String cityName;
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setUserId(Long userId) 
+    public void setUserId(Long userId)
     {
         this.userId = userId;
     }
 
-    public Long getUserId() 
+    public Long getUserId()
     {
         return userId;
     }
-    public void setCategoryId(Long categoryId) 
+    public void setCategoryId(Long categoryId)
     {
         this.categoryId = categoryId;
     }
 
-    public Long getCategoryId() 
+    public Long getCategoryId()
     {
         return categoryId;
     }
-    public void setTitle(String title) 
+    public void setTitle(String title)
     {
         this.title = title;
     }
 
-    public String getTitle() 
+    public String getTitle()
     {
         return title;
     }
-    public void setDescription(String description) 
+    public void setDescription(String description)
     {
         this.description = description;
     }
 
-    public String getDescription() 
+    public String getDescription()
     {
         return description;
     }
-    public void setPrice(BigDecimal price) 
+    public void setPrice(BigDecimal price)
     {
         this.price = price;
     }
 
-    public BigDecimal getPrice() 
+    public BigDecimal getPrice()
     {
         return price;
     }
-    public void setLocation(String location) 
+    public void setLocation(String location)
     {
         this.location = location;
     }
 
-    public String getLocation() 
+    public String getLocation()
     {
         return location;
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("userId", getUserId())
-            .append("categoryId", getCategoryId())
-            .append("title", getTitle())
-            .append("description", getDescription())
-            .append("price", getPrice())
-            .append("createTime", getCreateTime())
-            .append("updateTime", getUpdateTime())
-            .append("location", getLocation())
-            .toString();
+    public void setCityId(Long cityId)
+    {
+        this.cityId = cityId;
     }
+
+    public Long getCityId()
+    {
+        return cityId;
+    }
+    public void setImageUrl(String imageUrl)
+    {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageUrl()
+    {
+        return imageUrl;
+    }
+
+//    @Override
+//    public String toString() {
+//        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+//            .append("id", getId())
+//            .append("userId", getUserId())
+//            .append("categoryId", getCategoryId())
+//            .append("title", getTitle())
+//            .append("description", getDescription())
+//            .append("price", getPrice())
+//            .append("createTime", getCreateTime())
+//            .append("updateTime", getUpdateTime())
+//            .append("location", getLocation())
+//            .append("cityId", getCityId())
+//            .append("imageUrl", getImageUrl())
+//            .toString();
+//    }
 }

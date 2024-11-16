@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 服务发布Controller
  *
  * @author ruoyi
- * @date 2024-07-22
+ * @date 2024-07-27
  */
 @RestController
 @RequestMapping("/housekeeping/post")
@@ -37,7 +37,7 @@ public class SystemServicePostController extends BaseController
     /**
      * 查询服务发布列表
      */
-    @PreAuthorize("@ss.hasPermi('housekeeping:post:list')")
+//    @PreAuthorize("@ss.hasPermi('housekeeping:post:list')")
     @GetMapping("/list")
     public TableDataInfo list(SystemServicePost systemServicePost)
     {

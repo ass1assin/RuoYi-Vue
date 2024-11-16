@@ -1,26 +1,34 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="服务标题" prop="title">
+      <el-form-item label="${comment}" prop="name">
         <el-input
-          v-model="queryParams.title"
-          placeholder="请输入服务标题"
+          v-model="queryParams.name"
+          placeholder="请输入${comment}"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务地点" prop="location">
+      <el-form-item label="服务描述" prop="description">
         <el-input
-          v-model="queryParams.location"
-          placeholder="请输入服务地点"
+          v-model="queryParams.description"
+          placeholder="请输入服务描述"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="城市ID" prop="cityId">
+      <el-form-item label="类别id" prop="categoryId">
         <el-input
-          v-model="queryParams.cityId"
-          placeholder="请输入城市ID"
+          v-model="queryParams.categoryId"
+          placeholder="请输入类别id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="价格" prop="price">
+        <el-input
+          v-model="queryParams.price"
+          placeholder="请输入价格"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -39,7 +47,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['housekeeping:post:add']"
+          v-hasPermi="['system:service:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -50,7 +58,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['housekeeping:post:edit']"
+          v-hasPermi="['system:service:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -61,7 +69,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['housekeeping:post:remove']"
+          v-hasPermi="['system:service:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -71,26 +79,19 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['housekeeping:post:export']"
+          v-hasPermi="['system:service:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="serviceList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="服务类别" align="center" prop="categoryName" />
-      <el-table-column label="服务标题" align="center" prop="title" />
+      <el-table-column label="${comment}" align="center" prop="id" />
+      <el-table-column label="${comment}" align="center" prop="name" />
       <el-table-column label="服务描述" align="center" prop="description" />
-      <el-table-column label="服务价格" align="center" prop="price" />
-      <el-table-column label="服务地点" align="center" prop="location" />
-      <el-table-column label="城市" align="center" prop="cityName" />
-      <el-table-column label="图片地址" align="center" prop="imageUrl" width="100">
-        <template slot-scope="scope">
-          <image-preview :src="scope.row.imageUrl" :width="50" :height="50"/>
-        </template>
-      </el-table-column>
+      <el-table-column label="类别id" align="center" prop="categoryId" />
+      <el-table-column label="价格" align="center" prop="price" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -98,19 +99,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['housekeeping:post:edit']"
+            v-hasPermi="['system:service:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['housekeeping:post:remove']"
+            v-hasPermi="['system:service:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-
+    
     <pagination
       v-show="total>0"
       :total="total"
@@ -119,23 +120,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改服务发布对话框 -->
+    <!-- 添加或修改服务对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="服务标题" prop="title">
-          <el-input v-model="form.title" placeholder="请输入服务标题" />
+        <el-form-item label="${comment}" prop="name">
+          <el-input v-model="form.name" placeholder="请输入${comment}" />
         </el-form-item>
         <el-form-item label="服务描述" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.description" placeholder="请输入服务描述" />
         </el-form-item>
-        <el-form-item label="服务地点" prop="location">
-          <el-input v-model="form.location" placeholder="请输入服务地点" />
+        <el-form-item label="类别id" prop="categoryId">
+          <el-input v-model="form.categoryId" placeholder="请输入类别id" />
         </el-form-item>
-        <el-form-item label="城市ID" prop="cityId">
-          <el-input v-model="form.cityId" placeholder="请输入城市ID" />
-        </el-form-item>
-        <el-form-item label="图片地址" prop="imageUrl">
-          <image-upload v-model="form.imageUrl"/>
+        <el-form-item label="价格" prop="price">
+          <el-input v-model="form.price" placeholder="请输入价格" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -147,10 +145,10 @@
 </template>
 
 <script>
-import { listPost, getPost, delPost, addPost, updatePost } from "@/api/housekeeping/post";
+import { listService, getService, delService, addService, updateService } from "@/api/system/service";
 
 export default {
-  name: "Post",
+  name: "Service",
   data() {
     return {
       // 遮罩层
@@ -165,8 +163,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 服务发布表格数据
-      postList: [],
+      // 服务表格数据
+      serviceList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -175,32 +173,15 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        categoryId: null,
-        title: null,
+        name: null,
         description: null,
-        price: null,
-        location: null,
-        cityId: null,
+        categoryId: null,
+        price: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        categoryId: [
-          { required: true, message: "服务类别ID不能为空", trigger: "change" }
-        ],
-        title: [
-          { required: true, message: "服务标题不能为空", trigger: "blur" }
-        ],
-        description: [
-          { required: true, message: "服务描述不能为空", trigger: "blur" }
-        ],
-        location: [
-          { required: true, message: "服务地点不能为空", trigger: "blur" }
-        ],
-        // cityId: [
-        //   { required: true, message: "城市ID不能为空", trigger: "blur" }
-        // ],
       }
     };
   },
@@ -208,11 +189,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询服务发布列表 */
+    /** 查询服务列表 */
     getList() {
       this.loading = true;
-      listPost(this.queryParams).then(response => {
-        this.postList = response.rows;
+      listService(this.queryParams).then(response => {
+        this.serviceList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -226,18 +207,10 @@ export default {
     reset() {
       this.form = {
         id: null,
-        userId: null,
-        categoryId: null,
-        title: null,
+        name: null,
         description: null,
-        categoryName: null,
-        price: null,
-        createTime: null,
-        updateTime: null,
-        location: null,
-        cityName: null,
-        cityId: null,
-        imageUrl: null
+        categoryId: null,
+        price: null
       };
       this.resetForm("form");
     },
@@ -261,32 +234,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加服务发布";
+      this.title = "添加服务";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getPost(id).then(response => {
+      getService(id).then(response => {
         this.form = response.data;
-        // this.form.price = this.form.price.split(",");
         this.open = true;
-        this.title = "修改服务发布";
+        this.title = "修改服务";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          // this.form.price = this.form.price.join(",");
           if (this.form.id != null) {
-            updatePost(this.form).then(response => {
+            updateService(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addPost(this.form).then(response => {
+            addService(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -298,8 +269,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除服务发布编号为"' + ids + '"的数据项？').then(function() {
-        return delPost(ids);
+      this.$modal.confirm('是否确认删除服务编号为"' + ids + '"的数据项？').then(function() {
+        return delService(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -307,9 +278,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('housekeeping/post/export', {
+      this.download('system/service/export', {
         ...this.queryParams
-      }, `post_${new Date().getTime()}.xlsx`)
+      }, `service_${new Date().getTime()}.xlsx`)
     }
   }
 };

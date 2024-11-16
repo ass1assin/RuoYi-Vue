@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.housekeeping.mapper.SystemServicePostMapper">
-    
+
     <resultMap type="SystemServicePost" id="SystemServicePostResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
@@ -14,23 +14,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="location"    column="location"    />
+        <result property="cityId"    column="city_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="categoryName"    column="categoryName"    />
+        <result property="cityName"    column="cityName"    />
     </resultMap>
 
     <sql id="selectSystemServicePostVo">
-        select id, user_id, category_id, title, description, price, create_time, update_time, location from system_service_post
+        select ssp.id,
+               user_id,
+               ssc.name as categoryName,
+               title,
+               ssp.description,
+               price,
+               ssp.create_time,
+               ssp.update_time,
+               location,
+               sc.name as cityName,
+               image_url
+        from system_service_post as ssp
+                 left join system_city as sc on ssp.city_id = sc.id
+                 left join system_service_category as ssc on ssp.category_id = ssc.id
     </sql>
 
     <select id="selectSystemServicePostList" parameterType="SystemServicePost" resultMap="SystemServicePostResult">
         <include refid="selectSystemServicePostVo"/>
-        <where>  
-            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+        <where>
+            <if test="categoryName != null "> and ssc.name = #{categoryName}</if>
             <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
             <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
             <if test="price != null "> and price = #{price}</if>
             <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
+            <if test="cityName != null "> and sc.name = #{cityName}</if>
         </where>
     </select>
-    
+
     <select id="selectSystemServicePostById" parameterType="Long" resultMap="SystemServicePostResult">
         <include refid="selectSystemServicePostVo"/>
         where id = #{id}
@@ -47,6 +65,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="location != null and location != ''">location,</if>
+            <if test="cityId != null">city_id,</if>
+            <if test="imageUrl != null">image_url,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId},</if>
@@ -57,6 +77,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="location != null and location != ''">#{location},</if>
+            <if test="cityId != null">#{cityId},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
          </trim>
     </insert>
 
@@ -71,6 +93,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="location != null and location != ''">location = #{location},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
         </trim>
         where id = #{id}
     </update>
@@ -80,7 +104,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemServicePostByIds" parameterType="String">
-        delete from system_service_post where id in 
+        delete from system_service_post where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

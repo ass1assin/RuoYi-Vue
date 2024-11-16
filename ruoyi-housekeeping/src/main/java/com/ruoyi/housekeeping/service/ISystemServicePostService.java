@@ -7,7 +7,7 @@ import com.ruoyi.housekeeping.domain.SystemServicePost;
  * 服务发布Service接口
  * 
  * @author ruoyi
- * @date 2024-07-22
+ * @date 2024-07-27
  */
 public interface ISystemServicePostService 
 {

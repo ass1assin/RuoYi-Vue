@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SystemServiceCategoryMapper">
+
+    <resultMap type="SystemServiceCategory" id="SystemServiceCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <resultMap id="categoryServiceResultMap" type="com.ruoyi.system.domain.SystemServiceCategory">
+        <!-- 映射 SystemServiceCategory -->
+        <id property="id" column="category_id" />
+        <result property="name" column="category_name" />
+        <collection property="products" ofType="com.ruoyi.system.domain.SystemService">
+            <!-- 映射 SystemService -->
+            <id property="id" column="service_id" />
+            <result property="name" column="service_name" />
+            <collection property="images" ofType="com.ruoyi.system.domain.SystemServiceImage">
+                <!-- 映射 SystemServiceImage -->
+                <id property="id" column="image_id" />
+                <result property="imageUrl" column="image_url" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap type="SystemService" id="SystemServiceResult">
+        <id property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <collection property="images" ofType="SystemServiceImage">
+            <!-- 映射 SystemServiceImage -->
+            <id property="id" column="image_id" />
+            <result property="imageUrl" column="image_url" />
+        </collection>
+    </resultMap>
+
+
+    <select id="selectSystemServiceCategoryList" parameterType="SystemServiceCategory" resultMap="categoryServiceResultMap">
+        SELECT
+            sc.id AS category_id,
+            sc.name AS category_name,
+            s.id AS service_id,
+            s.name AS service_name,
+            s.description AS service_description,
+            si.image_id AS image_id,
+            si.image_url
+        FROM
+            system_service_category sc
+                LEFT JOIN
+            system_service s ON sc.id = s.category_id
+                LEFT JOIN
+            system_service_image si ON s.id = si.service_id
+    </select>
+
+    <select id="selectServiceCategoryDetail" parameterType="SystemService" resultMap="SystemServiceResult">
+        select
+            ss.id,
+            ss.name,
+            ss.description,
+            ssi.image_id,
+            ssi.image_url
+        from system_service ss
+                 left join system_service_image ssi
+                           on ss.id = ssi.service_id
+        where ss.id = #{id}
+    </select>
+
+
+
+
+    <sql id="selectSystemServiceCategoryVo">
+        select id, name, description from system_service_category
+    </sql>
+
+<!--    <select id="selectSystemServiceCategoryList" parameterType="SystemServiceCategory" resultMap="SystemServiceCategoryResult">-->
+<!--        <include refid="selectSystemServiceCategoryVo"/>-->
+<!--        <where>-->
+<!--            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>-->
+<!--            <if test="description != null  and description != ''"> and description = #{description}</if>-->
+<!--        </where>-->
+<!--    </select>-->
+
+    <select id="selectSystemServiceCategoryById" parameterType="Long" resultMap="SystemServiceCategoryResult">
+        <include refid="selectSystemServiceCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSystemServiceCategory" parameterType="SystemServiceCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into system_service_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSystemServiceCategory" parameterType="SystemServiceCategory">
+        update system_service_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSystemServiceCategoryById" parameterType="Long">
+        delete from system_service_category where id = #{id}
+    </delete>
+
+    <delete id="deleteSystemServiceCategoryByIds" parameterType="String">
+        delete from system_service_category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
