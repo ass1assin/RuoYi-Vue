@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <id property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
         <collection property="images" ofType="SystemServiceImage">
             <!-- 映射 SystemServiceImage -->
             <id property="id" column="image_id" />
@@ -38,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
 
-    <select id="selectSystemServiceCategoryList" parameterType="SystemServiceCategory" resultMap="categoryServiceResultMap">
+    <select id="selectSystemServiceCategoryList" parameterType="String" resultMap="categoryServiceResultMap">
         SELECT
             sc.id AS category_id,
             sc.name AS category_name,
@@ -53,6 +54,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             system_service s ON sc.id = s.category_id
                 LEFT JOIN
             system_service_image si ON s.id = si.service_id
+        <if test="cityName != null and cityName != ''">
+            LEFT JOIN
+            system_city_service cs ON s.id = cs.service_id
+        </if>
+        <where>
+            <if test="cityName != null and cityName != ''">
+                cs.city_id = (SELECT id FROM system_city WHERE city_name = #{cityName})
+            </if>
+        </where>
     </select>
 
     <select id="selectServiceCategoryDetail" parameterType="SystemService" resultMap="SystemServiceResult">
@@ -60,6 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ss.id,
             ss.name,
             ss.description,
+            ss.price,
             ssi.image_id,
             ssi.image_url
         from system_service ss

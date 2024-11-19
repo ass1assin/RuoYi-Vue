@@ -35,9 +35,9 @@ public class SystemServiceCategoryController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:category:list')")
     @GetMapping("/list")
-    public List<SystemServiceCategory> getServiceCategory()
+    public List<SystemServiceCategory> getServiceCategory(@RequestParam(required = false) String cityName)
     {
-        return systemServiceCategoryService.selectSystemServiceCategoryList();
+        return systemServiceCategoryService.selectSystemServiceCategoryList(cityName);
     }
 
     /**

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SystemCityMapper">
+    
+    <resultMap type="SystemCity" id="SystemCityResult">
+        <result property="id"    column="id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="status"    column="status"    />
+        <result property="baseServiceFee"    column="base_service_fee"    />
+    </resultMap>
+
+    <sql id="selectSystemCityVo">
+        select id, city_name, status, base_service_fee from system_city
+    </sql>
+
+    <select id="selectSystemCityList" parameterType="SystemCity" resultMap="SystemCityResult">
+        <include refid="selectSystemCityVo"/>
+        <where>  
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="baseServiceFee != null "> and base_service_fee = #{baseServiceFee}</if>
+        </where>
+    </select>
+    
+    <select id="selectSystemCityById" parameterType="Long" resultMap="SystemCityResult">
+        <include refid="selectSystemCityVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSystemCity" parameterType="SystemCity" useGeneratedKeys="true" keyProperty="id">
+        insert into system_city
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityName != null and cityName != ''">city_name,</if>
+            <if test="status != null">status,</if>
+            <if test="baseServiceFee != null">base_service_fee,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityName != null and cityName != ''">#{cityName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="baseServiceFee != null">#{baseServiceFee},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSystemCity" parameterType="SystemCity">
+        update system_city
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityName != null and cityName != ''">city_name = #{cityName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="baseServiceFee != null">base_service_fee = #{baseServiceFee},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSystemCityById" parameterType="Long">
+        delete from system_city where id = #{id}
+    </delete>
+
+    <delete id="deleteSystemCityByIds" parameterType="String">
+        delete from system_city where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

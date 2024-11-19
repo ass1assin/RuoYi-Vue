@@ -26,7 +26,7 @@ public interface SystemServiceCategoryMapper
      *
      * @return 服务种类集合
      */
-    public List<SystemServiceCategory> selectSystemServiceCategoryList();
+    public List<SystemServiceCategory> selectSystemServiceCategoryList(String cityName);
 
 
     public SystemService selectServiceCategoryDetail(Long id);

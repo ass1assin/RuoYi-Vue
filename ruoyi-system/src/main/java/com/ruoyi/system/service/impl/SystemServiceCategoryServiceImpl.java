@@ -39,9 +39,9 @@ public class SystemServiceCategoryServiceImpl implements ISystemServiceCategoryS
      * @return 服务种类
      */
     @Override
-    public List<SystemServiceCategory> selectSystemServiceCategoryList()
+    public List<SystemServiceCategory> selectSystemServiceCategoryList(String cityName)
     {
-        return systemServiceCategoryMapper.selectSystemServiceCategoryList();
+        return systemServiceCategoryMapper.selectSystemServiceCategoryList(cityName);
     }
 
 
