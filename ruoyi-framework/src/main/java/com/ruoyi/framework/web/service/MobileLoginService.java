@@ -1,6 +1,7 @@
 package com.ruoyi.framework.web.service;
 
-
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,7 +31,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -65,6 +70,7 @@ public class MobileLoginService  {
     @Autowired(required = false)
     private RedisCache redisCache;
 
+
     /**
      * 请求时间戳过期时间5分钟
      */
@@ -76,6 +82,36 @@ public class MobileLoginService  {
      */
     @Value("${token.secret}")
     private String jwtSecretKey;
+
+
+    @Value("${wx.appId}")
+    private String appId;
+
+    @Value("${wx.secret}")
+    private String appSecret;
+
+    private static final String WX_API_URL = "https://api.weixin.qq.com/sns/jscode2session";
+
+    public Map<String, String> getOpenidAndSessionKey(String code) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = WX_API_URL + "?appid=" + appId + "&secret=" + appSecret + "&js_code=" + code + "&grant_type=authorization_code";
+
+        // 调用微信接口
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        JSONObject json = JSON.parseObject(response.getBody());
+
+        if (json.containsKey("openid") && json.containsKey("session_key")) {
+            Map<String, String> result = new HashMap<>();
+            result.put("openid", json.getString("openid"));
+            result.put("session_key", json.getString("session_key"));
+            return result;
+        } else {
+            throw new ServiceException("微信登录失败：" + json.getString("errmsg"));
+        }
+    }
+
+
+
 
     public AjaxResult login(LoginParams loginParams) {
         log.debug("login and loginParams:{}", loginParams);

@@ -1,5 +1,7 @@
 package com.ruoyi.framework.config;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -116,6 +118,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 添加以下这一行，允许访问系统分类列表接口
                 .antMatchers("/system/category/**").permitAll()
                 .antMatchers("/system/city/**").permitAll()
+                .antMatchers("/system/wechat/**").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
                 .and()

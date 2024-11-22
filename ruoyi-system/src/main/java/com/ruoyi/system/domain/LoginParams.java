@@ -7,6 +7,7 @@ package com.ruoyi.system.domain;
  */
 public class LoginParams {
 
+
     /**
      * 用户名
      */

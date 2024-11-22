@@ -127,3 +127,6 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+wx:
+  appId: wxa9b1e3aabe8af602
+  secret: 1808a2def2554aa171729f3b757bbd67
