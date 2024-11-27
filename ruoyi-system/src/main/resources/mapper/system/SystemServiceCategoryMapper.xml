@@ -18,6 +18,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- 映射 SystemService -->
             <id property="id" column="service_id" />
             <result property="name" column="service_name" />
+            <result property="description" column="description" />
+            <result property="price" column="price" />
             <collection property="images" ofType="com.ruoyi.system.domain.SystemServiceImage">
                 <!-- 映射 SystemServiceImage -->
                 <id property="id" column="image_id" />
@@ -46,6 +48,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             s.id AS service_id,
             s.name AS service_name,
             s.description AS service_description,
+            s.price,
+            s.description,
             si.image_id AS image_id,
             si.image_url
         FROM

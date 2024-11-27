@@ -1,7 +1,9 @@
 package com.ruoyi.system.service;
 
-import com.ruoyi.system.domain.SystemServiceCategory;
+import com.ruoyi.system.domain.SystemComment;
+import com.ruoyi.system.domain.SystemOrders;
 import com.ruoyi.system.domain.SystemUserAddress;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -9,4 +11,10 @@ public interface ISystemWechatService {
     public int insertSystemUserAddress(SystemUserAddress systemUserAddress);
 
     public List<SystemUserAddress> getUserAddress(Long userId);
+
+    public List<SystemOrders> getOrder(SystemOrders systemOrders);
+
+    public int createOrder(SystemOrders systemOrders);
+
+    public List<SystemComment> getComment(SystemComment systemComment);
 }

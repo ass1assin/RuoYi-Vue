@@ -119,6 +119,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/system/category/**").permitAll()
                 .antMatchers("/system/city/**").permitAll()
                 .antMatchers("/system/wechat/**").permitAll()
+                .antMatchers("/wechat/pay/**").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
                 .and()

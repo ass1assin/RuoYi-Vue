@@ -3,8 +3,8 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.housekeeping.mapper.SystemOrderMapper">
-    
-    <resultMap type="SystemOrder" id="SystemOrderResult">
+
+    <resultMap type="com.ruoyi.housekeeping.domain.SystemOrder" id="SystemOrderResult">
         <result property="id"    column="id"    />
         <result property="appointmentId"    column="appointment_id"    />
         <result property="userId"    column="user_id"    />
@@ -21,9 +21,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, appointment_id, user_id, personnel_id, service_post_id, total_price, status, create_time, update_time, location from system_order
     </sql>
 
-    <select id="selectSystemOrderList" parameterType="SystemOrder" resultMap="SystemOrderResult">
+    <select id="selectSystemOrderList" parameterType="com.ruoyi.housekeeping.domain.SystemOrder" resultMap="SystemOrderResult">
         <include refid="selectSystemOrderVo"/>
-        <where>  
+        <where>
             <if test="userId != null "> and user_id like concat('%', #{userId}, '%')</if>
             <if test="personnelId != null "> and personnel_id like concat('%', #{personnelId}, '%')</if>
             <if test="totalPrice != null "> and total_price = #{totalPrice}</if>
@@ -31,13 +31,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
         </where>
     </select>
-    
+
     <select id="selectSystemOrderById" parameterType="Long" resultMap="SystemOrderResult">
         <include refid="selectSystemOrderVo"/>
         where id = #{id}
     </select>
 
-    <insert id="insertSystemOrder" parameterType="SystemOrder" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSystemOrder" parameterType="com.ruoyi.housekeeping.domain.SystemOrder" useGeneratedKeys="true" keyProperty="id">
         insert into system_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="appointmentId != null">appointment_id,</if>
@@ -63,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateSystemOrder" parameterType="SystemOrder">
+    <update id="updateSystemOrder" parameterType="com.ruoyi.housekeeping.domain.SystemOrder">
         update system_order
         <trim prefix="SET" suffixOverrides=",">
             <if test="appointmentId != null">appointment_id = #{appointmentId},</if>
@@ -84,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemOrderByIds" parameterType="String">
-        delete from system_order where id in 
+        delete from system_order where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

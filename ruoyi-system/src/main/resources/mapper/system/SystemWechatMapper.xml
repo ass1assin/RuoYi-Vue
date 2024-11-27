@@ -18,6 +18,36 @@
         <result property="address" column="address" />
     </resultMap>
 
+
+    <resultMap type="com.ruoyi.system.domain.SystemOrders" id="SystemOrderResult">
+        <id property="id" column="id" />
+        <result property="orderId" column="order_id" />             <!-- 修改：appointmentId 改为 orderId -->
+        <result property="userId" column="user_id" />
+        <result property="personnelId" column="personnel_id" />
+        <result property="servicePostId" column="service_post_id" />
+        <result property="serviceName" column="service_name" />     <!-- 添加：服务名称 -->
+        <result property="imageUrl" column="image_url" />           <!-- 添加：图片地址 -->
+        <result property="totalPrice" column="total_price" />
+        <result property="status" column="status" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="orderPackage" column="order_package" />   <!-- 添加：套餐信息 -->
+        <result property="location" column="location" />
+        <result property="serviceId" column="service_id" />
+    </resultMap>
+
+     <resultMap type="com.ruoyi.system.domain.SystemComment" id="SystemCommentResult">
+         <id property="id" column="id" />                     <!-- 评论ID -->
+         <result property="userId" column="user_id" />       <!-- 用户编号 -->
+         <result property="serviceId" column="service_id" /> <!-- 服务ID -->
+         <result property="rating" column="rating" />         <!-- 评分 -->
+         <result property="content" column="content" />       <!-- 评论内容 -->
+         <result property="imageUrls" column="image_urls" />   <!-- 评论图片 -->
+         <result property="parentId" column="parent_id" />     <!-- 父评论ID -->
+         <result property="createTime" column="create_time" />  <!-- 创建时间 -->
+     </resultMap>
+
+
     <insert id="insertSystemUserAddress" parameterType="SystemUserAddress">
         insert into system_user_addresses
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -48,7 +78,73 @@
 
     <select id="getUserAddress" parameterType="Long" resultMap="UserAddressResult">
         select * from system_user_addresses
-        where user_id = #{userId}
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getOrder" parameterType="com.ruoyi.system.domain.SystemOrders" resultMap="SystemOrderResult">
+        select * from system_order
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="createOrder" parameterType="com.ruoyi.system.domain.SystemOrders">
+        INSERT INTO system_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="personnelId != null">personnel_id,</if>
+            <if test="servicePostId != null">service_post_id,</if>
+            <if test="serviceName != null">service_name,</if>
+            <if test="imageUrl != null">image_url,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="orderPackage != null">order_package,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="location != null">location,</if>
+            <if test="serviceId != null">service_id,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="personnelId != null">#{personnelId},</if>
+            <if test="servicePostId != null">#{servicePostId},</if>
+            <if test="serviceName != null">#{serviceName},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="totalPrice != null">#{totalPrice},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="orderPackage != null">#{orderPackage},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="location != null">#{location},</if>
+            <if test="serviceId != null">#{serviceId},</if>
+        </trim>
+    </insert>
+
+
+    <select id="getComment" parameterType="com.ruoyi.system.domain.SystemComment" resultMap="SystemCommentResult">
+        SELECT *
+        FROM system_comment
+        <where>
+            <if test="userId != null">user_id = #{userId}</if>
+            <if test="serviceId != null">AND service_id = #{serviceId}</if>
+            <if test="parentId != null">AND parent_id = #{parentId}</if>
+            <if test="rating != null">AND rating = #{rating}</if>
+        </where>
     </select>
 
 </mapper>

@@ -38,4 +38,14 @@ public class newUser {
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
+
+    @Override
+    public String toString() {
+        return "newUser{" +
+                "userId=" + userId +
+                ", openid='" + openid + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", avatarUrl='" + avatarUrl + '\'' +
+                '}';
+    }
 }

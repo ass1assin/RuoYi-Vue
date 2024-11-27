@@ -49,6 +49,7 @@ public class LoginController{
         // 查询或创建用户
         newUser user = userService.selectUserByOpenId(openid);
 
+//        System.out.println("user: " + user);
 //        if (user == null) {
 //            // 如果用户不存在，创建新用户
 //            user = new newUser();
@@ -58,7 +59,7 @@ public class LoginController{
 //        }
 
         // 返回用户ID
-        return AjaxResult.success(user.getUserId());
+        return AjaxResult.success(user);
     }
 
     /**

@@ -130,3 +130,6 @@ xss:
 wx:
   appId: wxa9b1e3aabe8af602
   secret: 1808a2def2554aa171729f3b757bbd67
+qrcode:
+  payment:
+    url: https://i.postimg.cc/vHg47MWN/84098db74a15b4301ab6b351dc139c75.jpg
