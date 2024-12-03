@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="关联的用户ID" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入关联的用户ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="关联的用户ID" prop="userId">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.userId"-->
+<!--          placeholder="请输入关联的用户ID"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="服务人员姓名" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -25,10 +25,42 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务人员地点" prop="location">
+      <el-form-item label="服务人员邮箱" prop="email">
+        <el-input
+          v-model="queryParams.email"
+          placeholder="请输入服务人员邮箱"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="服务人员地点(城市名)" prop="location">
         <el-input
           v-model="queryParams.location"
-          placeholder="请输入服务人员地点"
+          placeholder="请输入服务人员地点(城市名)"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+<!--      <el-form-item label="所在城市id" prop="cityId">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.cityId"-->
+<!--          placeholder="请输入所在城市id"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+      <el-form-item label="资质认证" prop="qualification">
+        <el-input
+          v-model="queryParams.qualification"
+          placeholder="请输入资质认证"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="服务人员的工作周期" prop="workDay">
+        <el-input
+          v-model="queryParams.workDay"
+          placeholder="请输入服务人员的工作周期"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -72,28 +104,34 @@
           v-hasPermi="['housekeeping:personnel:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['housekeeping:personnel:export']"
-        >导出</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          plain-->
+<!--          icon="el-icon-download"-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['housekeeping:personnel:export']"-->
+<!--        >导出</el-button>-->
+<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="personnelList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="服务人员ID" align="center" prop="id" />
-      <el-table-column label="关联的用户ID" align="center" prop="userId" />
+<!--      <el-table-column label="关联的用户ID" align="center" prop="userId" />-->
       <el-table-column label="服务人员姓名" align="center" prop="name" />
       <el-table-column label="服务人员电话" align="center" prop="phone" />
+      <el-table-column label="服务人员状态" align="center" prop="status" />
       <el-table-column label="服务人员邮箱" align="center" prop="email" />
       <el-table-column label="服务经验" align="center" prop="experience" />
-      <el-table-column label="服务人员地点" align="center" prop="location" />
+      <el-table-column label="服务人员地点(城市名)" align="center" prop="location" />
+<!--      <el-table-column label="所在城市id" align="center" prop="cityId" />-->
+      <el-table-column label="资质认证" align="center" prop="qualification" />
+      <el-table-column label="擅长的服务类型" align="center" prop="serviceType" />
+      <el-table-column label="服务人员的工作周期" align="center" prop="workDay" />
+      <el-table-column label="服务人员的工作时间" align="center" prop="workTimes" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -113,7 +151,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -125,9 +163,9 @@
     <!-- 添加或修改服务人员管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="关联的用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入关联的用户ID" />
-        </el-form-item>
+<!--        <el-form-item label="关联的用户ID" prop="userId">-->
+<!--          <el-input v-model="form.userId" placeholder="请输入关联的用户ID" />-->
+<!--        </el-form-item>-->
         <el-form-item label="服务人员姓名" prop="name">
           <el-input v-model="form.name" placeholder="请输入服务人员姓名" />
         </el-form-item>
@@ -140,8 +178,17 @@
         <el-form-item label="服务经验" prop="experience">
           <el-input v-model="form.experience" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="服务人员地点" prop="location">
-          <el-input v-model="form.location" placeholder="请输入服务人员地点" />
+        <el-form-item label="服务人员地点(城市名)" prop="location">
+          <el-input v-model="form.location" placeholder="请输入服务人员地点(城市名)" />
+        </el-form-item>
+<!--        <el-form-item label="所在城市id" prop="cityId">-->
+<!--          <el-input v-model="form.cityId" placeholder="请输入所在城市id" />-->
+<!--        </el-form-item>-->
+        <el-form-item label="资质认证" prop="qualification">
+          <el-input v-model="form.qualification" placeholder="请输入资质认证" />
+        </el-form-item>
+        <el-form-item label="服务人员的工作周期" prop="workDay">
+          <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -184,15 +231,22 @@ export default {
         userId: null,
         name: null,
         phone: null,
-        location: null
+        status: null,
+        email: null,
+        experience: null,
+        location: null,
+        cityId: null,
+        qualification: null,
+        serviceType: null,
+        workDay: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        userId: [
-          { required: true, message: "关联的用户ID不能为空", trigger: "blur" }
-        ],
+        // userId: [
+        //   { required: true, message: "关联的用户ID不能为空", trigger: "blur" }
+        // ],
         name: [
           { required: true, message: "服务人员姓名不能为空", trigger: "blur" }
         ],
@@ -200,8 +254,8 @@ export default {
           { required: true, message: "服务人员电话不能为空", trigger: "blur" }
         ],
         location: [
-          { required: true, message: "服务人员地点不能为空", trigger: "blur" }
-        ]
+          { required: true, message: "服务人员地点(城市名)不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -230,11 +284,16 @@ export default {
         userId: null,
         name: null,
         phone: null,
+        status: null,
         email: null,
         experience: null,
         createTime: null,
         updateTime: null,
-        location: null
+        location: null,
+        cityId: null,
+        qualification: null,
+        serviceType: null,
+        workDay: null
       };
       this.resetForm("form");
     },

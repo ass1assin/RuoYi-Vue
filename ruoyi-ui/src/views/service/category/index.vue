@@ -48,16 +48,16 @@
           v-hasPermi="['system:category:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:category:export']"
-        >导出</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          plain-->
+<!--          icon="el-icon-download"-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['system:category:export']"-->
+<!--        >导出</el-button>-->
+<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -85,7 +85,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -113,7 +113,13 @@
 </template>
 
 <script>
-import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/system/category";
+import {
+  getCategory,
+  delCategory,
+  addCategory,
+  updateCategory,
+  yuanlistCategory
+} from "@/api/system/category";
 
 export default {
   name: "Category",
@@ -161,7 +167,7 @@ export default {
     /** 查询服务种类列表 */
     getList() {
       this.loading = true;
-      listCategory(this.queryParams).then(response => {
+      yuanlistCategory(this.queryParams).then(response => {
         this.categoryList = response.rows;
         this.total = response.total;
         this.loading = false;

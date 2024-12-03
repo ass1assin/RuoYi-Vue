@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.housekeeping.mapper.SystemServicePersonnelMapper">
-    
+
     <resultMap type="SystemServicePersonnel" id="SystemServicePersonnelResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
@@ -14,22 +14,58 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="location"    column="location"    />
+        <result property="serviceType"    column="service_type"    />
+        <result property="workDay"    column="work_day"    />
+        <result property="qualification"    column="qualification"    />
+        <result property="workTimes"    column="work_times"    />
     </resultMap>
 
     <sql id="selectSystemServicePersonnelVo">
-        select id, user_id, name, phone, email, experience, create_time, update_time, location from system_service_personnel
+        select id, user_id, name, phone, email, experience, create_time, update_time, location,qualification,service_type,work_day from system_service_personnel
     </sql>
 
+
     <select id="selectSystemServicePersonnelList" parameterType="SystemServicePersonnel" resultMap="SystemServicePersonnelResult">
-        <include refid="selectSystemServicePersonnelVo"/>
-        <where>  
+        SELECT
+        ssp.id,
+        ssp.user_id,
+        ssp.name,
+        ssp.phone,
+        ssp.email,
+        ssp.experience,
+        ssp.create_time,
+        ssp.update_time,
+        ssp.location,
+        ssp.qualification,
+        ssp.service_type,
+        ssp.work_day,
+        GROUP_CONCAT(CONCAT(sps.start_time, ' - ', sps.end_time) ORDER BY sps.start_time) AS work_times
+        FROM
+        system_service_personnel AS ssp
+        LEFT JOIN
+        system_personnel_schedule AS sps
+        ON ssp.id = sps.personnel_id
+        <where>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
             <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
         </where>
+        GROUP BY
+        ssp.id, ssp.user_id, ssp.name, ssp.phone, ssp.email, ssp.experience,
+        ssp.create_time, ssp.update_time, ssp.location, ssp.qualification,
+        ssp.service_type, ssp.work_day;
     </select>
-    
+<!--    <select id="selectSystemServicePersonnelList" parameterType="SystemServicePersonnel" resultMap="SystemServicePersonnelResult">-->
+<!--        <include refid="selectSystemServicePersonnelVo"/>-->
+<!--        <where>-->
+<!--            <if test="userId != null "> and user_id = #{userId}</if>-->
+<!--            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>-->
+<!--            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>-->
+<!--            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>-->
+<!--        </where>-->
+<!--    </select>-->
+
     <select id="selectSystemServicePersonnelById" parameterType="Long" resultMap="SystemServicePersonnelResult">
         <include refid="selectSystemServicePersonnelVo"/>
         where id = #{id}
@@ -79,7 +115,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemServicePersonnelByIds" parameterType="String">
-        delete from system_service_personnel where id in 
+        delete from system_service_personnel where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

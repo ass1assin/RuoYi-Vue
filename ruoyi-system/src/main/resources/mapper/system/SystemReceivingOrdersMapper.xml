@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.housekeeping.mapper.SystemOrderMapper">
+<mapper namespace="com.ruoyi.system.mapper.SystemReceivingOrdersMapper">
 
     <resultMap type="SystemOrder" id="SystemOrderResult">
         <result property="id"    column="id"    />
@@ -19,15 +19,45 @@
         <result property="updateTime"    column="update_time"    />
         <result property="location"    column="location"    />
         <result property="serviceId"    column="service_id"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
     </resultMap>
 
+    <resultMap id="SystemServicePersonnelResult" type="com.ruoyi.housekeeping.domain.SystemServicePersonnel">
+        <result property="id"             column="id" />
+        <result property="userId"         column="user_id" />
+        <result property="name"           column="name" />
+        <result property="phone"          column="phone" />
+        <result property="email"          column="email" />
+        <result property="experience"     column="experience" />
+        <result property="location"       column="location" />
+        <result property="qualification"  column="qualification" />
+        <result property="serviceType"    column="service_type" />
+        <result property="workDay"        column="work_day" />
+        <result property="workTimes"      column="work_times" />
+    </resultMap>
+
+
+    <select id="getAvailablePersonnel" parameterType="SystemOrder" resultMap="SystemServicePersonnelResult">
+        SELECT ssp.*
+        FROM system_service_personnel ssp
+        WHERE ssp.id NOT IN (SELECT DISTINCT o.personnel_id
+                             FROM system_order o
+                             WHERE o.end_time &gt;= #{startTime}
+                               AND o.start_time &lt;= #{endTime}
+                               AND o.status = 0)
+          AND ssp.location = #{location}
+    </select>
+
+
     <sql id="selectSystemOrderVo">
-        select id, order_id, user_id, personnel_id, service_post_id, service_name, image_url, total_price, status, create_time, order_package, update_time, location, service_id from system_order
+        select id, order_id, user_id, personnel_id, service_post_id, service_name, image_url, total_price, status, create_time, order_package, update_time, location, service_id, start_time, end_time from system_order
     </sql>
 
-    <select id="selectSystemOrderList" parameterType="SystemOrder" resultMap="SystemOrderResult">
+    <select id="selectSystemReceivingOrdersList" parameterType="SystemOrder" resultMap="SystemOrderResult">
         <include refid="selectSystemOrderVo"/>
         <where>
+            status = 0
             <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
             <if test="userId != null "> and user_id like concat('%', #{userId}, '%')</if>
             <if test="personnelId != null "> and personnel_id like concat('%', #{personnelId}, '%')</if>
@@ -42,12 +72,14 @@
         </where>
     </select>
 
-    <select id="selectSystemOrderById" parameterType="Long" resultMap="SystemOrderResult">
+    <select id="selectSystemReceivingOrdersById" parameterType="Long" resultMap="SystemOrderResult">
         <include refid="selectSystemOrderVo"/>
-        where id = #{id}
+        where
+        status = 0
+        and id = #{id}
     </select>
 
-    <insert id="insertSystemOrder" parameterType="SystemOrder" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSystemReceivingOrders" parameterType="SystemOrder" useGeneratedKeys="true" keyProperty="id">
         insert into system_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="orderId != null">order_id,</if>
@@ -81,7 +113,7 @@
         </trim>
     </insert>
 
-    <update id="updateSystemOrder" parameterType="SystemOrder">
+    <update id="updateSystemReceivingOrders" parameterType="SystemOrder">
         update system_order
         <trim prefix="SET" suffixOverrides=",">
             <if test="orderId != null">order_id = #{orderId},</if>
@@ -101,11 +133,11 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteSystemOrderById" parameterType="Long">
+    <delete id="deleteSystemReceivingOrdersById" parameterType="Long">
         delete from system_order where id = #{id}
     </delete>
 
-    <delete id="deleteSystemOrderByIds" parameterType="String">
+    <delete id="deleteSystemReceivingOrdersByIds" parameterType="String">
         delete from system_order where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}

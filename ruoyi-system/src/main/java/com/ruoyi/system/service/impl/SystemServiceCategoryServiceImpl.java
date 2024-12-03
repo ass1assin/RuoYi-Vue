@@ -44,6 +44,10 @@ public class SystemServiceCategoryServiceImpl implements ISystemServiceCategoryS
         return systemServiceCategoryMapper.selectSystemServiceCategoryList(cityName);
     }
 
+    public List<SystemServiceCategory> selectSystemServiceCategoryyuanList(SystemServiceCategory systemServiceCategory){
+        return systemServiceCategoryMapper.selectSystemServiceCategoryyuanList(systemServiceCategory);
+    };
+
 
     public SystemService selectServiceCategoryDetail(Long id){
         return systemServiceCategoryMapper.selectServiceCategoryDetail(id);

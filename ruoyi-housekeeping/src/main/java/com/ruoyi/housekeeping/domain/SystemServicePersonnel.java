@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 服务人员管理对象 system_service_personnel
- * 
+ *
  * @author ruoyi
  * @date 2024-07-22
  */
@@ -42,66 +42,106 @@ public class SystemServicePersonnel extends BaseEntity
     @Excel(name = "服务人员地点")
     private String location;
 
-    public void setId(Long id) 
+    private String qualification;
+
+    private String serviceType;
+
+    private String workDay;
+
+    private String workTimes;
+
+    public String getWorkTimes() {
+        return workTimes;
+    }
+
+    public void setWorkTimes(String workTimes) {
+        this.workTimes = workTimes;
+    }
+
+    public String getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(String qualification) {
+        this.qualification = qualification;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getWorkDay() {
+        return workDay;
+    }
+
+    public void setWorkDay(String workDay) {
+        this.workDay = workDay;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setUserId(Long userId) 
+    public void setUserId(Long userId)
     {
         this.userId = userId;
     }
 
-    public Long getUserId() 
+    public Long getUserId()
     {
         return userId;
     }
-    public void setName(String name) 
+    public void setName(String name)
     {
         this.name = name;
     }
 
-    public String getName() 
+    public String getName()
     {
         return name;
     }
-    public void setPhone(String phone) 
+    public void setPhone(String phone)
     {
         this.phone = phone;
     }
 
-    public String getPhone() 
+    public String getPhone()
     {
         return phone;
     }
-    public void setEmail(String email) 
+    public void setEmail(String email)
     {
         this.email = email;
     }
 
-    public String getEmail() 
+    public String getEmail()
     {
         return email;
     }
-    public void setExperience(String experience) 
+    public void setExperience(String experience)
     {
         this.experience = experience;
     }
 
-    public String getExperience() 
+    public String getExperience()
     {
         return experience;
     }
-    public void setLocation(String location) 
+    public void setLocation(String location)
     {
         this.location = location;
     }
 
-    public String getLocation() 
+    public String getLocation()
     {
         return location;
     }

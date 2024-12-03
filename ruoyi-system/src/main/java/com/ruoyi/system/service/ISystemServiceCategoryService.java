@@ -28,6 +28,8 @@ public interface ISystemServiceCategoryService
      */
     public List<SystemServiceCategory> selectSystemServiceCategoryList(String cityName);
 
+    public List<SystemServiceCategory> selectSystemServiceCategoryyuanList(SystemServiceCategory systemServiceCategory);
+
 
     /**
      * 小程序查询服务种类列表详情页

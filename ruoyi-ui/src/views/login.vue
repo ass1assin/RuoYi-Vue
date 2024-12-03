@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">若依后台管理系统</h3>
+      <h3 class="title">爱康养老家政后台</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
@@ -55,9 +55,9 @@
       </el-form-item>
     </el-form>
     <!--  底部  -->
-    <div class="el-login-footer">
-      <span>Copyright © 2018-2024 ruoyi.vip All Rights Reserved.</span>
-    </div>
+<!--    <div class="el-login-footer">-->
+<!--      <span>Copyright © 2018-2024 ruoyi.vip All Rights Reserved.</span>-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -161,46 +161,105 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url("../assets/images/login-background.jpg");
+  background-image: url("https://www.helloimg.com/i/2024/11/28/674745ac6dd4b.jpg");
   background-size: cover;
-}
-.title {
-  margin: 0px auto 30px auto;
-  text-align: center;
-  color: #707070;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px); // 移除模糊效果
+  }
 }
 
 .login-form {
-  border-radius: 6px;
-  background: #ffffff;
-  width: 400px;
-  padding: 25px 25px 5px 25px;
+  position: relative;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  width: 420px;
+  padding: 35px 35px 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
   .el-input {
-    height: 38px;
+    height: 42px;
+
     input {
-      height: 38px;
+      height: 42px;
+      background: #f5f7fa;
+      border-radius: 8px;
+      padding-left: 45px;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+
+      &:focus {
+        background: #fff;
+        border-color: #409EFF;
+        box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+      }
     }
   }
+
   .input-icon {
-    height: 39px;
-    width: 14px;
-    margin-left: 2px;
+    height: 42px;
+    width: 16px;
+    margin-left: 14px;
+    color: #909399;
   }
 }
-.login-tip {
-  font-size: 13px;
+
+.title {
+  margin: 0px auto 35px;
   text-align: center;
-  color: #bfbfbf;
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  letter-spacing: 1px;
 }
+
+// 登录按钮样式
+.el-button--primary {
+  height: 42px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  background: linear-gradient(45deg, #409EFF, #36D1DC);
+  border: none;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(64, 158, 255, 0.2);
+  }
+}
+
 .login-code {
   width: 33%;
-  height: 38px;
+  height: 42px;
   float: right;
+
   img {
+    height: 42px;
+    border-radius: 8px;
     cursor: pointer;
-    vertical-align: middle;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: scale(1.02);
+    }
   }
 }
+
 .el-login-footer {
   height: 40px;
   line-height: 40px;
@@ -208,12 +267,10 @@ export default {
   bottom: 0;
   width: 100%;
   text-align: center;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.8);
   font-family: Arial;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 1px;
-}
-.login-code-img {
-  height: 38px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 </style>

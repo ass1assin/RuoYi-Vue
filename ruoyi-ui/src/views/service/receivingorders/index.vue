@@ -87,52 +87,6 @@
       </el-form-item>
     </el-form>
 
-<!--    <el-row :gutter="10" class="mb8">-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['housekeeping:order:add']"-->
-<!--        >新增</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="success"-->
-<!--          plain-->
-<!--          icon="el-icon-edit"-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['housekeeping:order:edit']"-->
-<!--        >修改</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-delete"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handleDelete"-->
-<!--          v-hasPermi="['housekeeping:order:remove']"-->
-<!--        >删除</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['housekeeping:order:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
-<!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
-<!--    </el-row>-->
-
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键ID" align="center" prop="id" />
@@ -145,6 +99,8 @@
       <el-table-column label="订单总价" align="center" prop="totalPrice" />
       <el-table-column label="订单状态(0进行中，1已完成，2已取消)" align="center" prop="status" />
       <el-table-column label="选择套餐" align="center" prop="orderPackage" />
+      <el-table-column label="开始时间" align="center" prop="startTime" :formatter="formatDate"  />
+      <el-table-column label="结束时间" align="center" prop="endTime"  :formatter="formatDate" />
       <el-table-column label="服务地点" align="center" prop="location" />
       <el-table-column label="服务ID" align="center" prop="serviceId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -155,14 +111,14 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['housekeeping:order:edit']"
-          >查看详情</el-button>
+          >指派服务人员</el-button>
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['housekeeping:order:remove']"
-          >删除</el-button>
+            icon="el-icon-edit"
+
+            v-hasPermi="['housekeeping:order:edit']"
+          >取消接单</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -175,53 +131,54 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改订单管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="订单ID" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入订单ID" />
-        </el-form-item>
-        <el-form-item label="用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID" />
-        </el-form-item>
-        <el-form-item label="服务人员ID" prop="personnelId">
-          <el-input v-model="form.personnelId" placeholder="请输入服务人员ID" />
-        </el-form-item>
-        <el-form-item label="服务发布ID" prop="servicePostId">
-          <el-input v-model="form.servicePostId" placeholder="请输入服务发布ID" />
-        </el-form-item>
-        <el-form-item label="服务名称" prop="serviceName">
-          <el-input v-model="form.serviceName" placeholder="请输入服务名称" />
-        </el-form-item>
-        <el-form-item label="图片地址" prop="imageUrl">
-          <el-input v-model="form.imageUrl" placeholder="请输入图片地址" />
-        </el-form-item>
-        <el-form-item label="订单总价" prop="totalPrice">
-          <el-input v-model="form.totalPrice" placeholder="请输入订单总价" />
-        </el-form-item>
-        <el-form-item label="选择套餐" prop="orderPackage">
-          <el-input v-model="form.orderPackage" placeholder="请输入选择套餐" />
-        </el-form-item>
-        <el-form-item label="服务地点" prop="location">
-          <el-input v-model="form.location" placeholder="请输入服务地点" />
-        </el-form-item>
-        <el-form-item label="服务ID" prop="serviceId">
-          <el-input v-model="form.serviceId" placeholder="请输入服务ID" />
-        </el-form-item>
+        <!-- 服务人员列表 -->
+        <el-table
+          :data="personnelList"
+          style="width: 100%"
+          @row-click="handleRowClick"
+          highlight-current-row
+        >
+          <el-table-column label="服务人员ID" prop="id" />
+          <el-table-column label="服务人员姓名" prop="name" />
+          <el-table-column label="联系电话" prop="phone" />
+          <el-table-column label="擅长服务类型" prop="serviceType" />
+          <el-table-column label="资格认证" prop="qualification" />
+          <el-table-column label="经验" prop="experience" />
+          <el-table-column label="工作日" prop="workDay" />
+        </el-table>
+        <pagination
+          v-show="totaltwo>0"
+          :total="totaltwo"
+          :page.sync="query.pageNum"
+          :limit.sync="query.pageSize"
+          @pagination="getAvailablePersonnels"
+        />
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+
   </div>
 </template>
 
 <script>
-import { listOrder, getOrder, delOrder, addOrder, updateOrder } from "@/api/housekeeping/order";
+// import { listOrder, getOrder, delOrder, addOrder, updateOrder } from "@/api/housekeeping/order";
+import {
+  addReceivingOrders,
+  delReceivingOrders,
+  getAvailablePersonnel,
+  getReceivingOrders,
+  listReceivingOrders,
+  updateReceivingOrders
+} from "@/api/system/receivingorders";
 
 export default {
-  name: "Order",
+  name: "Receivingorders",
   data() {
     return {
       // 遮罩层
@@ -236,6 +193,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+
+      totaltwo: 0,
       // 订单管理表格数据
       orderList: [],
       // 弹出层标题
@@ -255,11 +214,24 @@ export default {
         totalPrice: null,
         status: null,
         orderPackage: null,
+        startTime: null,
+        endTime: null,
         location: null,
         serviceId: null
       },
+      query: {
+        pageNum: 1,
+        pageSize: 10,
+        startTime: null,
+        endTime: null,
+        location: null,
+      },
       // 表单参数
-      form: {},
+      // form: {},
+      form: {
+        // personnelId: null, // 服务人员ID
+      },
+      personnelList: [], // 服务人员列表
       // 表单校验
       rules: {
         userId: [
@@ -284,10 +256,15 @@ export default {
     this.getList();
   },
   methods: {
+    formatDate(row, column, cellValue, index) {
+      if (!cellValue) return '';
+      const date = new Date(cellValue);
+      return date.toLocaleString(); // 或者使用自定义的格式：date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
+    },
     /** 查询订单管理列表 */
     getList() {
       this.loading = true;
-      listOrder(this.queryParams).then(response => {
+      listReceivingOrders(this.queryParams).then(response => {
         this.orderList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -312,6 +289,8 @@ export default {
         status: null,
         createTime: null,
         orderPackage: null,
+        startTime: null,
+        endTime: null,
         updateTime: null,
         location: null,
         serviceId: null
@@ -340,14 +319,42 @@ export default {
       this.open = true;
       this.title = "添加订单管理";
     },
+    handleRowClick(row) {
+      this.form.personnelId = row.id;  // 将选中的服务人员ID存储到表单中
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getOrder(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改订单管理";
+      this.open = true;
+      this.title = "指派服务人员";
+      const startTime = new Date(row.startTime);
+      const endTime = new Date(row.endTime);
+
+      this.query.startTime = startTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
+      this.query.endTime = endTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
+
+      this.query.location = row.location.split(' ')[0];
+      this.getAvailablePersonnels();
+      // getAvailablePersonnel(this.query).then(response => {
+      //   this.personnelList = response.rows; // 保存服务人员列表
+      //   this.totaltwo = response.total;
+      //   this.form.personnelId = null; // 清空之前的服务人员ID
+      //   this.form.id = row.id;
+      // });
+    },
+    getAvailablePersonnels(){
+      // const startTime = new Date(row.startTime);
+      // const endTime = new Date(row.endTime);
+      //
+      // this.query.startTime = startTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
+      // this.query.endTime = endTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
+      //
+      // this.query.location = row.location.split(' ')[0];
+      getAvailablePersonnel(this.query).then(response => {
+        this.personnelList = response.rows; // 保存服务人员列表
+        this.totaltwo = response.total;
+        this.form.personnelId = null; // 清空之前的服务人员ID
+        this.form.id = row.id;
       });
     },
     /** 提交按钮 */
@@ -355,13 +362,14 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateOrder(this.form).then(response => {
+            updateReceivingOrders(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
-          } else {
-            addOrder(this.form).then(response => {
+          }
+          else {
+            addReceivingOrders(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -374,7 +382,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal.confirm('是否确认删除订单管理编号为"' + ids + '"的数据项？').then(function () {
-        return delOrder(ids);
+        return delReceivingOrders(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -383,7 +391,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('housekeeping/order/export', {
+      this.download('system/receivingOrders/export', {
         ...this.queryParams
       }, `order_${new Date().getTime()}.xlsx`)
     }

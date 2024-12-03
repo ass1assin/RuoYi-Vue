@@ -1,5 +1,7 @@
 package com.ruoyi.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -21,6 +23,26 @@ public class SystemOrders implements Serializable {
     private String orderPackage;       // 选择套餐（小时/天）
     private String location;            // 订单地点
     private Long serviceId;            // 服务ID（与数据库中的服务ID字段对应）
+
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")  // 添加此注解，指定日期格式
+    private Timestamp startTime;       // 开始时间
+    private Timestamp endTime;         // 结束时间
+
+    public Timestamp getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Timestamp endTime) {
+        this.endTime = endTime;
+    }
+
+    public Timestamp getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+    }
 
     // Getter 和 Setter 方法
     public Long getId() {

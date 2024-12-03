@@ -90,13 +90,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, name, description from system_service_category
     </sql>
 
-<!--    <select id="selectSystemServiceCategoryList" parameterType="SystemServiceCategory" resultMap="SystemServiceCategoryResult">-->
-<!--        <include refid="selectSystemServiceCategoryVo"/>-->
-<!--        <where>-->
-<!--            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>-->
-<!--            <if test="description != null  and description != ''"> and description = #{description}</if>-->
-<!--        </where>-->
-<!--    </select>-->
+    <select id="selectSystemServiceCategoryyuanList" parameterType="SystemServiceCategory" resultMap="SystemServiceCategoryResult">
+        <include refid="selectSystemServiceCategoryVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and name like concat('%', #{description}, '%')</if>
+        </where>
+    </select>
 
     <select id="selectSystemServiceCategoryById" parameterType="Long" resultMap="SystemServiceCategoryResult">
         <include refid="selectSystemServiceCategoryVo"/>

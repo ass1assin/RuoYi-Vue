@@ -40,6 +40,15 @@ public class SystemServiceCategoryController extends BaseController
         return systemServiceCategoryService.selectSystemServiceCategoryList(cityName);
     }
 
+    @PreAuthorize("@ss.hasPermi('system:category:list')")
+    @GetMapping("/yuanlist")
+    public TableDataInfo  getServiceCategoryyuan(SystemServiceCategory systemServiceCategory)
+    {
+        startPage();
+        List<SystemServiceCategory> list = systemServiceCategoryService.selectSystemServiceCategoryyuanList(systemServiceCategory);
+        return getDataTable(list);
+    }
+
     /**
      * 小程序查询服务种类列表详情页
      */

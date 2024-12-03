@@ -9,6 +9,14 @@ export function listCategory(query) {
   })
 }
 
+export function yuanlistCategory(query) {
+  return request({
+    url: '/system/category/yuanlist',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询服务种类详细
 export function getCategory(id) {
   return request({

@@ -28,6 +28,7 @@ public interface SystemServiceCategoryMapper
      */
     public List<SystemServiceCategory> selectSystemServiceCategoryList(String cityName);
 
+    public List<SystemServiceCategory> selectSystemServiceCategoryyuanList(SystemServiceCategory systemServiceCategory);
 
     public SystemService selectServiceCategoryDetail(Long id);
 

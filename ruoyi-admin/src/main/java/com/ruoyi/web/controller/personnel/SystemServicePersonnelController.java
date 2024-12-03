@@ -41,7 +41,7 @@ public class SystemServicePersonnelController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SystemServicePersonnel systemServicePersonnel)
     {
-        startPage();
+//        startPage();
         List<SystemServicePersonnel> list = systemServicePersonnelService.selectSystemServicePersonnelList(systemServicePersonnel);
         return getDataTable(list);
     }
