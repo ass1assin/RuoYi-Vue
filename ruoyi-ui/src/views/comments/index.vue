@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户编号" prop="userId">
+      <el-form-item label="用户名" prop="userName">
         <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户编号"
+          v-model="queryParams.userName"
+          placeholder="请输入用户名"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务ID" prop="serviceId">
+      <el-form-item label="服务名" prop="serviceName">
         <el-input
-          v-model="queryParams.serviceId"
-          placeholder="请输入服务ID"
+          v-model="queryParams.serviceName"
+          placeholder="请输入服务名"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -25,75 +25,25 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="父评论" prop="parentId">
-        <el-input
-          v-model="queryParams.parentId"
-          placeholder="请输入父评论"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
-<!--    <el-row :gutter="10" class="mb8">-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['system:comments:add']"-->
-<!--        >新增</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="success"-->
-<!--          plain-->
-<!--          icon="el-icon-edit"-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['system:comments:edit']"-->
-<!--        >修改</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-delete"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handleDelete"-->
-<!--          v-hasPermi="['system:comments:remove']"-->
-<!--        >删除</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['system:comments:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
-<!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
-<!--    </el-row>-->
 
     <el-table v-loading="loading" :data="commentsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="评论编号" align="center" prop="id" />
-      <el-table-column label="用户编号" align="center" prop="userId" />
-      <el-table-column label="服务ID" align="center" prop="serviceId" />
+<!--      <el-table-column label="用户编号" align="center" prop="userId" />-->
+<!--      <el-table-column label="服务ID" align="center" prop="serviceId" />-->
+      <el-table-column label="用户名" align="center" prop="userName" />
+      <el-table-column label="服务名" align="center" prop="serviceName" />
       <el-table-column label="评分" align="center" prop="rating" />
       <el-table-column label="评论内容" align="center" prop="content" />
       <el-table-column label="评论图片" align="center" prop="imageUrls" />
-      <el-table-column label="父评论" align="center" prop="parentId" />
+<!--      <el-table-column label="父评论" align="center" prop="parentId" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -182,6 +132,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         userId: null,
+        serviceName: null,
         serviceId: null,
         rating: null,
         content: null,

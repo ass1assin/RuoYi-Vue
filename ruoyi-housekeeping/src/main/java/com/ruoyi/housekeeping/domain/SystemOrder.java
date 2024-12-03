@@ -79,6 +79,16 @@ public class SystemOrder extends BaseEntity
     /** 用户名 */
     private String userName; // 新增字段
 
+    private String phoneNumber; // 新增字段
+
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getPersonnelName() {
         return personnelName;

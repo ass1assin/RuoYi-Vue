@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SystemCommentsMapper">
-    
+
     <resultMap type="SystemComments" id="SystemCommentsResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
@@ -13,6 +13,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="imageUrls"    column="image_urls"    />
         <result property="parentId"    column="parent_id"    />
         <result property="createTime"    column="create_time"    />
+        <result property="userName"    column="user_name"    />
+        <result property="serviceName"    column="service_name"    />
     </resultMap>
 
     <sql id="selectSystemCommentsVo">
@@ -20,8 +22,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSystemCommentsList" parameterType="SystemComments" resultMap="SystemCommentsResult">
-        <include refid="selectSystemCommentsVo"/>
-        <where>  
+        select
+            sc.*,
+            su.user_name,
+            ss.name as service_name
+        from system_comment as sc
+        left join sys_user as su on sc.user_id = su.user_id
+        left join system_service as ss on sc.service_id = ss.id
+        <where>
+            <if test="serviceName != null "> and ss.name = #{serviceName}</if>
+            <if test="userName != null "> and user_name = #{userName}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="serviceId != null "> and service_id = #{serviceId}</if>
             <if test="rating != null "> and rating = #{rating}</if>
@@ -30,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="parentId != null "> and parent_id = #{parentId}</if>
         </where>
     </select>
-    
+
     <select id="selectSystemCommentsById" parameterType="Long" resultMap="SystemCommentsResult">
         <include refid="selectSystemCommentsVo"/>
         where id = #{id}
@@ -77,7 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemCommentsByIds" parameterType="String">
-        delete from system_comment where id in 
+        delete from system_comment where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

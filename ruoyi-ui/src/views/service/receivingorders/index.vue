@@ -9,42 +9,11 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户ID" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="服务人员ID" prop="personnelId">
-        <el-input
-          v-model="queryParams.personnelId"
-          placeholder="请输入服务人员ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="服务发布ID" prop="servicePostId">
-        <el-input
-          v-model="queryParams.servicePostId"
-          placeholder="请输入服务发布ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="服务名称" prop="serviceName">
         <el-input
           v-model="queryParams.serviceName"
           placeholder="请输入服务名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="图片地址" prop="imageUrl">
-        <el-input
-          v-model="queryParams.imageUrl"
-          placeholder="请输入图片地址"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -73,14 +42,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务ID" prop="serviceId">
-        <el-input
-          v-model="queryParams.serviceId"
-          placeholder="请输入服务ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -91,21 +52,28 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键ID" align="center" prop="id" />
       <el-table-column label="订单ID" align="center" prop="orderId" />
-      <el-table-column label="用户ID" align="center" prop="userId" />
-      <el-table-column label="服务人员ID" align="center" prop="personnelId" />
-      <el-table-column label="服务发布ID" align="center" prop="servicePostId" />
+      <el-table-column label="用户名" align="center" prop="userName" />
+      <el-table-column label="手机号" align="center" prop="phoneNumber" />
+      <el-table-column label="服务人员姓名" align="center" prop="personnelName" />
       <el-table-column label="服务名称" align="center" prop="serviceName" />
       <el-table-column label="图片地址" align="center" prop="imageUrl" />
       <el-table-column label="订单总价" align="center" prop="totalPrice" />
-      <el-table-column label="订单状态(0进行中，1已完成，2已取消)" align="center" prop="status" />
+      <el-table-column label="订单状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <span :class="getStatusClass(scope.row.status)">
+            {{ getStatusText(scope.row.status) }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="选择套餐" align="center" prop="orderPackage" />
       <el-table-column label="开始时间" align="center" prop="startTime" :formatter="formatDate"  />
       <el-table-column label="结束时间" align="center" prop="endTime"  :formatter="formatDate" />
       <el-table-column label="服务地点" align="center" prop="location" />
-      <el-table-column label="服务ID" align="center" prop="serviceId" />
+      <el-table-column label="服务名" align="center" prop="serviceName" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.status !== 1"
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -113,12 +81,13 @@
             v-hasPermi="['housekeeping:order:edit']"
           >指派服务人员</el-button>
           <el-button
+            v-if="scope.row.status !== 1"
             size="mini"
             type="text"
             icon="el-icon-edit"
-
+            @click="handleReject(scope.row)"
             v-hasPermi="['housekeeping:order:edit']"
-          >取消接单</el-button>
+          >拒绝接单</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -162,6 +131,15 @@
       </div>
     </el-dialog>
 
+    <el-dialog :title="'拒绝接单'" :visible.sync="rejectDialogVisible" width="400px" append-to-body>
+      <div style="text-align: center;">
+        <p>确认要拒绝该订单吗？</p>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmReject">确 定</el-button>
+        <el-button @click="rejectDialogVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
@@ -176,6 +154,7 @@ import {
   listReceivingOrders,
   updateReceivingOrders
 } from "@/api/system/receivingorders";
+import {updatePersonnel} from "@/api/housekeeping/personnel";
 
 export default {
   name: "Receivingorders",
@@ -208,7 +187,6 @@ export default {
         orderId: null,
         userId: null,
         personnelId: null,
-        servicePostId: null,
         serviceName: null,
         imageUrl: null,
         totalPrice: null,
@@ -226,6 +204,9 @@ export default {
         endTime: null,
         location: null,
       },
+      updataParams: {
+
+      },
       // 表单参数
       // form: {},
       form: {
@@ -240,15 +221,17 @@ export default {
         personnelId: [
           { required: true, message: "服务人员ID不能为空", trigger: "blur" }
         ],
-        servicePostId: [
-          { required: true, message: "服务发布ID不能为空", trigger: "blur" }
-        ],
+
         totalPrice: [
           { required: true, message: "订单总价不能为空", trigger: "blur" }
         ],
         location: [
           { required: true, message: "服务地点不能为空", trigger: "blur" }
         ],
+      },
+      rejectDialogVisible: false,
+      rejectForm: {
+        id: null
       }
     };
   },
@@ -282,7 +265,6 @@ export default {
         orderId: null,
         userId: null,
         personnelId: null,
-        servicePostId: null,
         serviceName: null,
         imageUrl: null,
         totalPrice: null,
@@ -296,6 +278,11 @@ export default {
         serviceId: null
       };
       this.resetForm("form");
+    },
+    /** 拒绝接单操作 */
+    handleReject(row) {
+      this.rejectForm.id = row.id;
+      this.rejectDialogVisible = true;
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -334,27 +321,14 @@ export default {
       this.query.endTime = endTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
 
       this.query.location = row.location.split(' ')[0];
+      this.form.id = row.id;
       this.getAvailablePersonnels();
-      // getAvailablePersonnel(this.query).then(response => {
-      //   this.personnelList = response.rows; // 保存服务人员列表
-      //   this.totaltwo = response.total;
-      //   this.form.personnelId = null; // 清空之前的服务人员ID
-      //   this.form.id = row.id;
-      // });
     },
     getAvailablePersonnels(){
-      // const startTime = new Date(row.startTime);
-      // const endTime = new Date(row.endTime);
-      //
-      // this.query.startTime = startTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
-      // this.query.endTime = endTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
-      //
-      // this.query.location = row.location.split(' ')[0];
       getAvailablePersonnel(this.query).then(response => {
         this.personnelList = response.rows; // 保存服务人员列表
         this.totaltwo = response.total;
         this.form.personnelId = null; // 清空之前的服务人员ID
-        this.form.id = row.id;
       });
     },
     /** 提交按钮 */
@@ -394,7 +368,71 @@ export default {
       this.download('system/receivingOrders/export', {
         ...this.queryParams
       }, `order_${new Date().getTime()}.xlsx`)
+    },
+    // 获取状态样式类名
+    getStatusClass(status) {
+      const statusMap = {
+        0: 'status-waiting',    // 待商家接单
+        1: 'status-processing', // 服务进行中
+        2: 'status-completed',  // 已完成
+        3: 'status-cancelled'   // 已取消
+      }
+      return statusMap[status] || ''
+    },
+
+    // 获取状态显示文本
+    getStatusText(status) {
+      const statusMap = {
+        0: '待接单',
+        1: '服务进行中',
+        2: '已完成',
+        3: '已取消'
+      }
+      return statusMap[status] || '未知状态'
+    },
+    /** 确认拒绝接单 */
+    confirmReject() {
+      const updateObj = {
+        id: this.rejectForm.id,
+        status: 4  // 将状态改为4（拒绝接单）
+      };
+
+      updateReceivingOrders(updateObj).then(response => {
+        this.$modal.msgSuccess("已拒绝");
+        this.rejectDialogVisible = false;
+        this.getList();
+      });
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.status-waiting {
+  color: #e6a23c;          // 橙色
+  background-color: #fdf6ec;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-processing {
+  color: #409eff;          // 蓝色
+  background-color: #ecf5ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-completed {
+  color: #67c23a;          // 绿色
+  background-color: #f0f9eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-cancelled {
+  color: #f56c6c;          // 红色
+  background-color: #fef0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+</style>

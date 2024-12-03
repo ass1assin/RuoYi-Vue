@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 评论对象 system_comment
- * 
+ *
  * @author ruoyi
  * @date 2024-12-02
  */
@@ -42,66 +42,86 @@ public class SystemComments extends BaseEntity
     @Excel(name = "父评论")
     private Long parentId;
 
-    public void setId(Long id) 
+    private String serviceName;
+
+    private  String userName;
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setUserId(Long userId) 
+    public void setUserId(Long userId)
     {
         this.userId = userId;
     }
 
-    public Long getUserId() 
+    public Long getUserId()
     {
         return userId;
     }
-    public void setServiceId(Long serviceId) 
+    public void setServiceId(Long serviceId)
     {
         this.serviceId = serviceId;
     }
 
-    public Long getServiceId() 
+    public Long getServiceId()
     {
         return serviceId;
     }
-    public void setRating(Long rating) 
+    public void setRating(Long rating)
     {
         this.rating = rating;
     }
 
-    public Long getRating() 
+    public Long getRating()
     {
         return rating;
     }
-    public void setContent(String content) 
+    public void setContent(String content)
     {
         this.content = content;
     }
 
-    public String getContent() 
+    public String getContent()
     {
         return content;
     }
-    public void setImageUrls(String imageUrls) 
+    public void setImageUrls(String imageUrls)
     {
         this.imageUrls = imageUrls;
     }
 
-    public String getImageUrls() 
+    public String getImageUrls()
     {
         return imageUrls;
     }
-    public void setParentId(Long parentId) 
+    public void setParentId(Long parentId)
     {
         this.parentId = parentId;
     }
 
-    public Long getParentId() 
+    public Long getParentId()
     {
         return parentId;
     }

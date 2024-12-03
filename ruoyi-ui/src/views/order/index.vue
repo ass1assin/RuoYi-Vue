@@ -255,7 +255,8 @@ export default {
         0: 'status-waiting',    // 待商家接单
         1: 'status-processing', // 服务进行中
         2: 'status-completed',  // 已完成
-        3: 'status-cancelled'   // 已取消
+        3: 'status-cancelled',   // 已取消
+        4: 'status-cancelled'
       }
       return statusMap[status] || ''
     },
@@ -265,7 +266,8 @@ export default {
         0: '待商家接单',
         1: '服务进行中',
         2: '已完成',
-        3: '已取消'
+        3: '已取消',
+        4: '已拒绝'
       }
       return statusMap[status] || '未知状态'
     }
@@ -298,6 +300,12 @@ export default {
 .status-cancelled {
   color: #f56c6c;
   background-color: #fef0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.status-rejected {
+  color: #909399;          // 灰色
+  background-color: #f4f4f5;
   padding: 2px 6px;
   border-radius: 4px;
 }

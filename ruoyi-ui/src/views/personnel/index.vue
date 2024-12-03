@@ -105,14 +105,7 @@
       <el-table-column label="资质认证" align="center" prop="qualification" />
       <el-table-column label="擅长的服务类型" align="center" prop="serviceType" />
       <el-table-column label="服务人员的工作周期" align="center" prop="workDay" />
-      <el-table-column label="服务人员的工作时间" align="center" width="300">
-        <template slot-scope="scope">
-          <div v-if="scope.row.workTimes">
-            <div>{{ getTimeRangeText(scope.row.workTimes, 0) }}</div>
-          </div>
-          <span v-else>暂未设置</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="服务人员的工作时间" align="center" prop="workTimes"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -142,8 +135,8 @@
     />
 
     <!-- 添加或修改服务人员管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 <!--        <el-form-item label="关联的用户ID" prop="userId">-->
 <!--          <el-input v-model="form.userId" placeholder="请输入关联的用户ID" />-->
 <!--        </el-form-item>-->
@@ -170,40 +163,6 @@
         </el-form-item>
         <el-form-item label="服务人员的工作周期" prop="workDay">
           <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期" />
-        </el-form-item>
-        <el-form-item label="上午工作时间" prop="morningTime">
-          <el-time-picker
-            v-model="workTimeMorningStart"
-            format="HH:mm"
-            placeholder="起始时间"
-            style="width: 180px;"
-            @change="handleTimeChange"
-          />
-          <span style="margin: 0 10px;">至</span>
-          <el-time-picker
-            v-model="workTimeMorningEnd"
-            format="HH:mm"
-            placeholder="结束时间"
-            style="width: 180px;"
-            @change="handleTimeChange"
-          />
-        </el-form-item>
-        <el-form-item label="下午工作时间" prop="afternoonTime">
-          <el-time-picker
-            v-model="workTimeAfternoonStart"
-            format="HH:mm"
-            placeholder="起始时间"
-            style="width: 180px;"
-            @change="handleTimeChange"
-          />
-          <span style="margin: 0 10px;">至</span>
-          <el-time-picker
-            v-model="workTimeAfternoonEnd"
-            format="HH:mm"
-            placeholder="结束时间"
-            style="width: 180px;"
-            @change="handleTimeChange"
-          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -256,23 +215,7 @@ export default {
         workDay: null
       },
       // 表单参数
-      form: {
-        id: null,
-        userId: null,
-        name: null,
-        phone: null,
-        // status: null,
-        email: null,
-        experience: null,
-        createTime: null,
-        updateTime: null,
-        location: null,
-        cityId: null,
-        qualification: null,
-        serviceType: null,
-        workDay: null,
-        workTimes: null
-      },
+      form: {},
       // 表单校验
       rules: {
         // userId: [
@@ -287,17 +230,7 @@ export default {
         location: [
           { required: true, message: "服务人员所在城市不能为空", trigger: "blur" }
         ],
-        morningTime: [
-          { required: true, message: "请设置上午工作时间", trigger: "change" }
-        ],
-        afternoonTime: [
-          { required: true, message: "请设置下午工作时间", trigger: "change" }
-        ]
-      },
-      workTimeMorningStart: null,
-      workTimeMorningEnd: null,
-      workTimeAfternoonStart: null,
-      workTimeAfternoonEnd: null
+      }
     };
   },
   created() {
@@ -334,13 +267,8 @@ export default {
         cityId: null,
         qualification: null,
         serviceType: null,
-        workDay: null,
-        workTimes: null
+        workDay: null
       };
-      this.workTimeMorningStart = null;
-      this.workTimeMorningEnd = null;
-      this.workTimeAfternoonStart = null;
-      this.workTimeAfternoonEnd = null;
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -368,23 +296,9 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids;
+      const id = row.id || this.ids
       getPersonnel(id).then(response => {
         this.form = response.data;
-        // 解析已有的工作时间
-        if (this.form.workTimes) {
-          const [morningTime, afternoonTime] = this.form.workTimes.split('|');
-          if (morningTime) {
-            const [mStart, mEnd] = morningTime.split('-');
-            this.workTimeMorningStart = this.$moment(`2000-01-01 ${mStart}`).toDate();
-            this.workTimeMorningEnd = this.$moment(`2000-01-01 ${mEnd}`).toDate();
-          }
-          if (afternoonTime) {
-            const [aStart, aEnd] = afternoonTime.split('-');
-            this.workTimeAfternoonStart = this.$moment(`2000-01-01 ${aStart}`).toDate();
-            this.workTimeAfternoonEnd = this.$moment(`2000-01-01 ${aEnd}`).toDate();
-          }
-        }
         this.open = true;
         this.title = "修改服务人员管理";
       });
@@ -425,31 +339,57 @@ export default {
         ...this.queryParams
       }, `personnel_${new Date().getTime()}.xlsx`)
     },
-    // 处理时间变化
-    handleTimeChange() {
-      if (this.workTimeMorningStart && this.workTimeMorningEnd &&
-          this.workTimeAfternoonStart && this.workTimeAfternoonEnd) {
-        const formatTime = (time) => {
-          return this.$moment(time).format('HH:mm');
-        };
-        const morningTime = `${formatTime(this.workTimeMorningStart)}-${formatTime(this.workTimeMorningEnd)}`;
-        const afternoonTime = `${formatTime(this.workTimeAfternoonStart)}-${formatTime(this.workTimeAfternoonEnd)}`;
-        this.form.workTimes = `${morningTime}|${afternoonTime}`;
+    // 获取状态样式类名
+    getStatusClass(status) {
+      const statusMap = {
+        0: 'status-waiting',    // 待商家接单
+        1: 'status-processing', // 服务进行中
+        2: 'status-completed',  // 已完成
+        3: 'status-cancelled'   // 已取消
       }
+      return statusMap[status] || ''
     },
-
-    // 获取显示的时间段文本
-    getTimeRangeText(workTimes, index) {
-      if (!workTimes) return '暂未设置';
-      const timeRanges = workTimes.split('|');
-      return timeRanges[index] || '暂未设置';
+    
+    // 获取状态显示文本
+    getStatusText(status) {
+      const statusMap = {
+        0: '待商家接单',
+        1: '服务进行中',
+        2: '已完成',
+        3: '已取消'
+      }
+      return statusMap[status] || '未知状态'
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.el-time-picker {
-  margin-right: 10px;
+.status-waiting {
+  color: #e6a23c;          // 橙色
+  background-color: #fdf6ec;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-processing {
+  color: #409eff;          // 蓝色
+  background-color: #ecf5ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-completed {
+  color: #67c23a;          // 绿色
+  background-color: #f0f9eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-cancelled {
+  color: #f56c6c;          // 红色
+  background-color: #fef0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 </style>

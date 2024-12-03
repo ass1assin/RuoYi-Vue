@@ -11,6 +11,8 @@
         <result property="personnelId"    column="personnel_id"    />
         <result property="servicePostId"    column="service_post_id"    />
         <result property="serviceName"    column="service_name"    />
+        <result property="personnelName" column="personnel_name" /> <!-- 服务人员姓名 -->
+        <result property="userName" column="user_name" /> <!-- 用户名 -->
         <result property="imageUrl"    column="image_url"    />
         <result property="totalPrice"    column="total_price"    />
         <result property="status"    column="status"    />
@@ -21,6 +23,7 @@
         <result property="serviceId"    column="service_id"    />
         <result property="startTime"    column="start_time"    />
         <result property="endTime"    column="end_time"    />
+        <result property="phoneNumber"    column="phonenumber"    />
     </resultMap>
 
     <resultMap id="SystemServicePersonnelResult" type="com.ruoyi.housekeeping.domain.SystemServicePersonnel">
@@ -55,9 +58,31 @@
     </sql>
 
     <select id="selectSystemReceivingOrdersList" parameterType="SystemOrder" resultMap="SystemOrderResult">
-        <include refid="selectSystemOrderVo"/>
+        select
+        o.id,
+        o.order_id,
+        o.personnel_id,
+        p.name as personnel_name, -- 服务人员姓名
+        o.service_id,
+        s.name as service_name, -- 服务名称
+        o.user_id,
+        u.username as user_name, -- 用户名
+        o.image_url,
+        o.total_price,
+        o.status,
+        o.phonenumber,
+        o.create_time,
+        o.order_package,
+        o.update_time,
+        o.location,
+        o.start_time,
+        o.end_time
+        from system_order o
+        LEFT JOIN system_service_personnel p ON o.personnel_id = p.id -- 通过服务人员ID连接服务人员表
+        LEFT JOIN system_service s ON o.service_id = s.id -- 通过服务ID连接服务表
+        LEFT JOIN system_user u ON o.user_id = u.id -- 通过用户ID连接用户表
         <where>
-            status = 0
+            o.status = 0 OR o.status = 1
             <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
             <if test="userId != null "> and user_id like concat('%', #{userId}, '%')</if>
             <if test="personnelId != null "> and personnel_id like concat('%', #{personnelId}, '%')</if>
@@ -67,7 +92,7 @@
             <if test="totalPrice != null "> and total_price = #{totalPrice}</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="orderPackage != null  and orderPackage != ''"> and order_package = #{orderPackage}</if>
-            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
+            <if test="location != null  and location != ''"> and o.location like concat('%', #{location}, '%')</if>
             <if test="serviceId != null "> and service_id = #{serviceId}</if>
         </where>
     </select>
