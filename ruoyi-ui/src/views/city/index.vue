@@ -9,7 +9,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="城市基础服务费用" prop="baseServiceFee">
+      <el-form-item label="城市基础服务费用" prop="baseServiceFee" label-width="180px">
         <el-input
           v-model="queryParams.baseServiceFee"
           placeholder="请输入城市基础服务费用"
@@ -56,16 +56,6 @@
           v-hasPermi="['system:city:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['system:city:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -73,7 +63,13 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="城市ID" align="center" prop="id" />
       <el-table-column label="城市名称" align="center" prop="cityName" />
-      <el-table-column label="开通状态" align="center" prop="status" />
+      <el-table-column label="开通状态" align="center">
+        <template slot-scope="scope">
+            <span :class="getStatusClass(scope.row.status)">
+              {{ getStatusText(scope.row.status) }}
+            </span>
+        </template>
+      </el-table-column>
       <el-table-column label="城市基础服务费用" align="center" prop="baseServiceFee" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -105,9 +101,15 @@
 
     <!-- 添加或修改城市对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="城市名称" prop="cityName">
           <el-input v-model="form.cityName" placeholder="请输入城市名称" />
+        </el-form-item>
+        <el-form-item label="开通状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio :label="1">已开通</el-radio>
+            <el-radio :label="0">未开通</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="城市基础服务费用" prop="baseServiceFee">
           <el-input v-model="form.baseServiceFee" placeholder="请输入城市基础服务费用" />
@@ -161,6 +163,9 @@ export default {
         cityName: [
           { required: true, message: "城市名称不能为空", trigger: "blur" }
         ],
+        status: [
+          { required: true, message: "请选择开通状态", trigger: "change" }
+        ]
       }
     };
   },
@@ -168,6 +173,23 @@ export default {
     this.getList();
   },
   methods: {
+    getStatusClass(status) {
+      if (status === 1) {
+        return 'status-open'; // 已开通
+      } else if (status === 0) {
+        return 'status-closed'; // 未开通
+      }
+      return '';
+    },
+    getStatusText(status) {
+      if (status === 1) {
+        return '已开通';
+      } else if (status === 0) {
+        return '未开通';
+      }
+      return '未知状态';
+    },
+
     /** 查询城市列表 */
     getList() {
       this.loading = true;
@@ -187,7 +209,7 @@ export default {
       this.form = {
         id: null,
         cityName: null,
-        status: null,
+        status: 0,  // 默认设置为未开通
         baseServiceFee: null
       };
       this.resetForm("form");
@@ -263,3 +285,19 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.status-open {
+  color: #3e8e41; /* 淡绿色 */
+  background-color: #eaffea; /* 淡绿色背景 */
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-closed {
+  color: #8a5c3e; /* 淡棕色 */
+  background-color: #f9e8e3; /* 淡棕色背景 */
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+</style>

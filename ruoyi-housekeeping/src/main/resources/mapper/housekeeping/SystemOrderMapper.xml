@@ -19,32 +19,77 @@
         <result property="updateTime"    column="update_time"    />
         <result property="location"    column="location"    />
         <result property="serviceId"    column="service_id"    />
+        <!-- 新增字段映射 -->
+        <result property="personnelName" column="personnelName" /> <!-- 映射服务人员姓名 -->
+        <result property="userName" column="userName" /> <!-- 映射用户名 -->
     </resultMap>
 
     <sql id="selectSystemOrderVo">
         select id, order_id, user_id, personnel_id, service_post_id, service_name, image_url, total_price, status, create_time, order_package, update_time, location, service_id from system_order
     </sql>
 
+
     <select id="selectSystemOrderList" parameterType="SystemOrder" resultMap="SystemOrderResult">
-        <include refid="selectSystemOrderVo"/>
+        SELECT
+        o.*,
+        s.name AS serviceName,
+        p.name AS personnelName,
+        u.user_name AS userName
+        FROM
+        system_order o
+        LEFT JOIN system_service s ON o.service_id = s.id
+        LEFT JOIN system_service_personnel p ON o.personnel_id = p.id
+        LEFT JOIN sys_user u ON o.user_id = u.user_id
         <where>
-            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
-            <if test="userId != null "> and user_id like concat('%', #{userId}, '%')</if>
-            <if test="personnelId != null "> and personnel_id like concat('%', #{personnelId}, '%')</if>
-            <if test="servicePostId != null "> and service_post_id = #{servicePostId}</if>
-            <if test="serviceName != null  and serviceName != ''"> and service_name like concat('%', #{serviceName}, '%')</if>
-            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
-            <if test="totalPrice != null "> and total_price = #{totalPrice}</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="orderPackage != null  and orderPackage != ''"> and order_package = #{orderPackage}</if>
-            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
-            <if test="serviceId != null "> and service_id = #{serviceId}</if>
+            <!-- 根据服务名称、服务人员姓名和用户名进行查询 -->
+            <if test="serviceName != null and serviceName != ''">
+                and s.name like concat('%', #{serviceName}, '%')
+            </if>
+            <if test="personnelName != null and personnelName != ''">
+                and p.name like concat('%', #{personnelName}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                and u.user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="orderId != null and orderId != ''">
+                and order_id = #{orderId}
+            </if>
+            <if test="orderPackage != null and orderPackage != ''">
+                and order_package = #{orderPackage}
+            </if>
+            <if test="totalPrice != null">
+                and total_price = #{totalPrice}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="location != null and location != ''">
+                and location like concat('%', #{location}, '%')
+            </if>
+            <if test="serviceId != null">
+                and service_id = #{serviceId}
+            </if>
+            <if test="imageUrl != null and imageUrl != ''">
+                and image_url = #{imageUrl}
+            </if>
+            <if test="servicePostId != null">
+                and service_post_id = #{servicePostId}
+            </if>
         </where>
     </select>
 
     <select id="selectSystemOrderById" parameterType="Long" resultMap="SystemOrderResult">
-        <include refid="selectSystemOrderVo"/>
-        where id = #{id}
+        SELECT
+            o.*,
+            s.name AS serviceName,
+            p.name AS personnelName,
+            u.user_name AS userName
+        FROM
+            system_order o
+                LEFT JOIN system_service s ON o.service_id = s.id
+                LEFT JOIN system_service_personnel p ON o.personnel_id = p.id
+                LEFT JOIN sys_user u ON o.user_id = u.user_id
+        where o.id = #{id}
     </select>
 
     <insert id="insertSystemOrder" parameterType="SystemOrder" useGeneratedKeys="true" keyProperty="id">

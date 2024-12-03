@@ -37,14 +37,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ssp.update_time,
         ssp.location,
         ssp.qualification,
-        ssp.service_type,
+        GROUP_CONCAT(DISTINCT sc.name ORDER BY FIELD(sc.id, ssp.service_type)) AS service_type,
         ssp.work_day,
-        GROUP_CONCAT(CONCAT(sps.start_time, ' - ', sps.end_time) ORDER BY sps.start_time) AS work_times
+        GROUP_CONCAT(DISTINCT CONCAT(sps.start_time, ' - ', sps.end_time) ORDER BY sps.start_time) AS work_times
         FROM
         system_service_personnel AS ssp
         LEFT JOIN
-        system_personnel_schedule AS sps
-        ON ssp.id = sps.personnel_id
+        system_personnel_schedule AS sps ON ssp.id = sps.personnel_id
+        LEFT JOIN
+        system_service_category AS sc ON FIND_IN_SET(sc.id, ssp.service_type) > 0
         <where>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
@@ -56,15 +57,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ssp.create_time, ssp.update_time, ssp.location, ssp.qualification,
         ssp.service_type, ssp.work_day;
     </select>
-<!--    <select id="selectSystemServicePersonnelList" parameterType="SystemServicePersonnel" resultMap="SystemServicePersonnelResult">-->
-<!--        <include refid="selectSystemServicePersonnelVo"/>-->
-<!--        <where>-->
-<!--            <if test="userId != null "> and user_id = #{userId}</if>-->
-<!--            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>-->
-<!--            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>-->
-<!--            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>-->
-<!--        </where>-->
-<!--    </select>-->
 
     <select id="selectSystemServicePersonnelById" parameterType="Long" resultMap="SystemServicePersonnelResult">
         <include refid="selectSystemServicePersonnelVo"/>

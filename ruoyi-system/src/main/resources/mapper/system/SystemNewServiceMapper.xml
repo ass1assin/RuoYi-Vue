@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SystemNewServiceMapper">
-    
+
     <resultMap type="SystemNewService" id="SystemNewServiceResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
@@ -12,28 +12,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="price"    column="price"    />
         <result property="hours"    column="hours"    />
         <result property="hourlyRate"    column="hourly_rate"    />
-        <result property="days"    column="days"    />
-        <result property="dailyRate"    column="daily_rate"    />
+
     </resultMap>
 
     <sql id="selectSystemNewServiceVo">
-        select id, name, description, category_id, price, hours, hourly_rate, days, daily_rate from system_service
+        select id, name, description, category_id, price, hours, hourly_rate from system_service
     </sql>
 
     <select id="selectSystemNewServiceList" parameterType="SystemNewService" resultMap="SystemNewServiceResult">
         <include refid="selectSystemNewServiceVo"/>
-        <where>  
+        <where>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="description != null  and description != ''"> and description = #{description}</if>
             <if test="categoryId != null "> and category_id = #{categoryId}</if>
             <if test="price != null "> and price = #{price}</if>
             <if test="hours != null  and hours != ''"> and hours = #{hours}</if>
             <if test="hourlyRate != null "> and hourly_rate = #{hourlyRate}</if>
-            <if test="days != null "> and days = #{days}</if>
-            <if test="dailyRate != null "> and daily_rate = #{dailyRate}</if>
+
         </where>
     </select>
-    
+
     <select id="selectSystemNewServiceById" parameterType="Long" resultMap="SystemNewServiceResult">
         <include refid="selectSystemNewServiceVo"/>
         where id = #{id}
@@ -49,8 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="price != null">price,</if>
             <if test="hours != null">hours,</if>
             <if test="hourlyRate != null">hourly_rate,</if>
-            <if test="days != null">days,</if>
-            <if test="dailyRate != null">daily_rate,</if>
+
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -60,8 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="price != null">#{price},</if>
             <if test="hours != null">#{hours},</if>
             <if test="hourlyRate != null">#{hourlyRate},</if>
-            <if test="days != null">#{days},</if>
-            <if test="dailyRate != null">#{dailyRate},</if>
+
          </trim>
     </insert>
 
@@ -74,8 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="price != null">price = #{price},</if>
             <if test="hours != null">hours = #{hours},</if>
             <if test="hourlyRate != null">hourly_rate = #{hourlyRate},</if>
-            <if test="days != null">days = #{days},</if>
-            <if test="dailyRate != null">daily_rate = #{dailyRate},</if>
+
         </trim>
         where id = #{id}
     </update>
@@ -85,7 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemNewServiceByIds" parameterType="String">
-        delete from system_service where id in 
+        delete from system_service where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

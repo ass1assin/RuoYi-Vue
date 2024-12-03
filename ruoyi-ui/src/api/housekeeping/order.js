@@ -17,23 +17,6 @@ export function getOrder(id) {
   })
 }
 
-// 新增订单管理
-export function addOrder(data) {
-  return request({
-    url: '/housekeeping/order',
-    method: 'post',
-    data: data
-  })
-}
-
-// 修改订单管理
-export function updateOrder(data) {
-  return request({
-    url: '/housekeeping/order',
-    method: 'put',
-    data: data
-  })
-}
 
 // 删除订单管理
 export function delOrder(id) {

@@ -9,30 +9,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户ID" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="服务人员ID" prop="personnelId">
-        <el-input
-          v-model="queryParams.personnelId"
-          placeholder="请输入服务人员ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="服务发布ID" prop="servicePostId">
-        <el-input
-          v-model="queryParams.servicePostId"
-          placeholder="请输入服务发布ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="服务名称" prop="serviceName">
         <el-input
           v-model="queryParams.serviceName"
@@ -41,14 +17,25 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="图片地址" prop="imageUrl">
+
+      <el-form-item label="服务人员姓名" prop="personnelName" label-width="110px">
         <el-input
-          v-model="queryParams.imageUrl"
-          placeholder="请输入图片地址"
+          v-model="queryParams.personnelName"
+          placeholder="请输入服务人员姓名"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+
+      <el-form-item label="用户名" prop="userName">
+        <el-input
+          v-model="queryParams.userName"
+          placeholder="请输入用户名"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+
       <el-form-item label="订单总价" prop="totalPrice">
         <el-input
           v-model="queryParams.totalPrice"
@@ -73,95 +60,43 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务ID" prop="serviceId">
-        <el-input
-          v-model="queryParams.serviceId"
-          placeholder="请输入服务ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
-<!--    <el-row :gutter="10" class="mb8">-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['housekeeping:order:add']"-->
-<!--        >新增</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="success"-->
-<!--          plain-->
-<!--          icon="el-icon-edit"-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['housekeeping:order:edit']"-->
-<!--        >修改</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-delete"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handleDelete"-->
-<!--          v-hasPermi="['housekeeping:order:remove']"-->
-<!--        >删除</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['housekeeping:order:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
-<!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
-<!--    </el-row>-->
-
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键ID" align="center" prop="id" />
       <el-table-column label="订单ID" align="center" prop="orderId" />
-      <el-table-column label="用户ID" align="center" prop="userId" />
-      <el-table-column label="服务人员ID" align="center" prop="personnelId" />
-      <el-table-column label="服务发布ID" align="center" prop="servicePostId" />
       <el-table-column label="服务名称" align="center" prop="serviceName" />
+      <el-table-column label="服务人员" align="center" prop="personnelName" />
+      <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="图片地址" align="center" prop="imageUrl" />
       <el-table-column label="订单总价" align="center" prop="totalPrice" />
-      <el-table-column label="订单状态(0进行中，1已完成，2已取消)" align="center" prop="status" />
+      <el-table-column label="订单状态" align="center">
+        <template slot-scope="scope">
+          <span :class="getStatusClass(scope.row.status)">
+            {{ getStatusText(scope.row.status) }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="选择套餐" align="center" prop="orderPackage" />
       <el-table-column label="服务地点" align="center" prop="location" />
-      <el-table-column label="服务ID" align="center" prop="serviceId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['housekeeping:order:edit']"
+            @click="handlePreview(scope.row)"
           >查看详情</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['housekeeping:order:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -177,48 +112,47 @@
 
     <!-- 添加或修改订单管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="订单ID" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入订单ID" />
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="订单ID">
+          <span>{{ form.orderId }}</span>
         </el-form-item>
-        <el-form-item label="用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID" />
+        <el-form-item label="服务名称">
+          <span>{{ form.serviceName }}</span>
         </el-form-item>
-        <el-form-item label="服务人员ID" prop="personnelId">
-          <el-input v-model="form.personnelId" placeholder="请输入服务人员ID" />
+        <el-form-item label="服务人员姓名">
+          <span>{{ form.personnelName }}</span>
         </el-form-item>
-        <el-form-item label="服务发布ID" prop="servicePostId">
-          <el-input v-model="form.servicePostId" placeholder="请输入服务发布ID" />
+        <el-form-item label="用户名">
+          <span>{{ form.userName }}</span>
         </el-form-item>
-        <el-form-item label="服务名称" prop="serviceName">
-          <el-input v-model="form.serviceName" placeholder="请输入服务名称" />
+        <el-form-item label="图片地址">
+          <span>{{ form.imageUrl }}</span>
         </el-form-item>
-        <el-form-item label="图片地址" prop="imageUrl">
-          <el-input v-model="form.imageUrl" placeholder="请输入图片地址" />
+        <el-form-item label="订单总价">
+          <span>{{ form.totalPrice }}</span>
         </el-form-item>
-        <el-form-item label="订单总价" prop="totalPrice">
-          <el-input v-model="form.totalPrice" placeholder="请输入订单总价" />
+        <el-form-item label="订单状态">
+          <span :class="getStatusClass(form.status)">{{ getStatusText(form.status) }}</span>
         </el-form-item>
-        <el-form-item label="选择套餐" prop="orderPackage">
-          <el-input v-model="form.orderPackage" placeholder="请输入选择套餐" />
+        <el-form-item label="选择套餐">
+          <span>{{ form.orderPackage }}</span>
         </el-form-item>
-        <el-form-item label="服务地点" prop="location">
-          <el-input v-model="form.location" placeholder="请输入服务地点" />
+        <el-form-item label="服务地点">
+          <span>{{ form.location }}</span>
         </el-form-item>
-        <el-form-item label="服务ID" prop="serviceId">
-          <el-input v-model="form.serviceId" placeholder="请输入服务ID" />
-        </el-form-item>
+<!--        <el-form-item label="服务ID">-->
+<!--          <span>{{ form.serviceId }}</span>-->
+<!--        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listOrder, getOrder, delOrder, addOrder, updateOrder } from "@/api/housekeeping/order";
+import { listOrder, getOrder, delOrder } from "@/api/housekeeping/order";
 
 export default {
   name: "Order",
@@ -226,12 +160,6 @@ export default {
     return {
       // 遮罩层
       loading: true,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
       // 显示搜索条件
       showSearch: true,
       // 总条数
@@ -247,36 +175,27 @@ export default {
         pageNum: 1,
         pageSize: 10,
         orderId: null,
-        userId: null,
-        personnelId: null,
-        servicePostId: null,
         serviceName: null,
+        personnelName: null,
+        userName: null,
+        totalPrice: null,
+        orderPackage: null,
+        location: null,
+        status: null
+      },
+      // 表单参数
+      form: {
+        orderId: null,
+        serviceName: null,
+        personnelName: null,
+        userName: null,
         imageUrl: null,
         totalPrice: null,
         status: null,
         orderPackage: null,
         location: null,
-        serviceId: null
-      },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-        userId: [
-          { required: true, message: "用户ID不能为空", trigger: "blur" }
-        ],
-        personnelId: [
-          { required: true, message: "服务人员ID不能为空", trigger: "blur" }
-        ],
-        servicePostId: [
-          { required: true, message: "服务发布ID不能为空", trigger: "blur" }
-        ],
-        totalPrice: [
-          { required: true, message: "订单总价不能为空", trigger: "blur" }
-        ],
-        location: [
-          { required: true, message: "服务地点不能为空", trigger: "blur" }
-        ],
+        serviceId: null,
+        servicePostId: null
       }
     };
   },
@@ -300,23 +219,7 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
-        id: null,
-        orderId: null,
-        userId: null,
-        personnelId: null,
-        servicePostId: null,
-        serviceName: null,
-        imageUrl: null,
-        totalPrice: null,
-        status: null,
-        createTime: null,
-        orderPackage: null,
-        updateTime: null,
-        location: null,
-        serviceId: null
-      };
-      this.resetForm("form");
+      this.form = {};
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -328,65 +231,74 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
+    /** 预览按钮操作 */
+    handlePreview(row) {
       this.reset();
-      this.open = true;
-      this.title = "添加订单管理";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getOrder(id).then(response => {
+      getOrder(row.id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改订单管理";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateOrder(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addOrder(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
+        this.title = "订单详情";
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除订单管理编号为"' + ids + '"的数据项？').then(function () {
-        return delOrder(ids);
+      this.$modal.confirm('是否确认删除订单编号为"' + row.id + '"的数据项？').then(() => {
+        return delOrder(row.id);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {
-      });
+      }).catch(() => {});
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('housekeeping/order/export', {
-        ...this.queryParams
-      }, `order_${new Date().getTime()}.xlsx`)
+    // 状态样式
+    getStatusClass(status) {
+      const statusMap = {
+        0: 'status-waiting',    // 待商家接单
+        1: 'status-processing', // 服务进行中
+        2: 'status-completed',  // 已完成
+        3: 'status-cancelled'   // 已取消
+      }
+      return statusMap[status] || ''
+    },
+    // 状态文本
+    getStatusText(status) {
+      const statusMap = {
+        0: '待商家接单',
+        1: '服务进行中',
+        2: '已完成',
+        3: '已取消'
+      }
+      return statusMap[status] || '未知状态'
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.status-waiting {
+  color: #e6a23c;
+  background-color: #fdf6ec;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-processing {
+  color: #409eff;
+  background-color: #ecf5ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-completed {
+  color: #67c23a;
+  background-color: #f0f9eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-cancelled {
+  color: #f56c6c;
+  background-color: #fef0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+</style>

@@ -3,27 +3,26 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.housekeeping.mapper.SystemArticleMapper">
-    
+
     <resultMap type="SystemArticle" id="SystemArticleResult">
         <result property="id"    column="id"    />
         <result property="title"    column="title"    />
         <result property="content"    column="content"    />
-        <result property="authorId"    column="author_id"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectSystemArticleVo">
-        select id, title, content, author_id, create_time, update_time from system_article
+        select id, title, content,  create_time, update_time from system_article
     </sql>
 
     <select id="selectSystemArticleList" parameterType="SystemArticle" resultMap="SystemArticleResult">
         <include refid="selectSystemArticleVo"/>
-        <where>  
+        <where>
             <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
         </where>
     </select>
-    
+
     <select id="selectSystemArticleById" parameterType="Long" resultMap="SystemArticleResult">
         <include refid="selectSystemArticleVo"/>
         where id = #{id}
@@ -34,14 +33,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="title != null and title != ''">title,</if>
             <if test="content != null and content != ''">content,</if>
-            <if test="authorId != null">author_id,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="title != null and title != ''">#{title},</if>
             <if test="content != null and content != ''">#{content},</if>
-            <if test="authorId != null">#{authorId},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
@@ -52,7 +49,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="title != null and title != ''">title = #{title},</if>
             <if test="content != null and content != ''">content = #{content},</if>
-            <if test="authorId != null">author_id = #{authorId},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
@@ -64,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemArticleByIds" parameterType="String">
-        delete from system_article where id in 
+        delete from system_article where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

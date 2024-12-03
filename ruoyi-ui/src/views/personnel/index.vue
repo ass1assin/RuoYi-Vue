@@ -9,7 +9,7 @@
 <!--          @keyup.enter.native="handleQuery"-->
 <!--        />-->
 <!--      </el-form-item>-->
-      <el-form-item label="服务人员姓名" prop="name">
+      <el-form-item label="服务人员姓名" prop="name" label-width="110px">
         <el-input
           v-model="queryParams.name"
           placeholder="请输入服务人员姓名"
@@ -17,7 +17,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务人员电话" prop="phone">
+      <el-form-item label="服务人员电话" prop="phone" label-width="110px">
         <el-input
           v-model="queryParams.phone"
           placeholder="请输入服务人员电话"
@@ -25,7 +25,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务人员邮箱" prop="email">
+      <el-form-item label="服务人员邮箱" prop="email" label-width="110px">
         <el-input
           v-model="queryParams.email"
           placeholder="请输入服务人员邮箱"
@@ -33,31 +33,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务人员地点(城市名)" prop="location">
+      <el-form-item label="服务人员所在城市" prop="location" label-width="140px">
         <el-input
           v-model="queryParams.location"
-          placeholder="请输入服务人员地点(城市名)"
+          placeholder="请输入服务人员所在城市"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="所在城市id" prop="cityId">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.cityId"-->
-<!--          placeholder="请输入所在城市id"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-      <el-form-item label="资质认证" prop="qualification">
-        <el-input
-          v-model="queryParams.qualification"
-          placeholder="请输入资质认证"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="服务人员的工作周期" prop="workDay">
+      <el-form-item label="服务人员工作周期" prop="workDay" label-width="180px">
         <el-input
           v-model="queryParams.workDay"
           placeholder="请输入服务人员的工作周期"
@@ -104,16 +88,6 @@
           v-hasPermi="['housekeeping:personnel:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['housekeeping:personnel:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -123,15 +97,22 @@
 <!--      <el-table-column label="关联的用户ID" align="center" prop="userId" />-->
       <el-table-column label="服务人员姓名" align="center" prop="name" />
       <el-table-column label="服务人员电话" align="center" prop="phone" />
-      <el-table-column label="服务人员状态" align="center" prop="status" />
+<!--      <el-table-column label="服务人员状态" align="center" prop="status" />-->
       <el-table-column label="服务人员邮箱" align="center" prop="email" />
       <el-table-column label="服务经验" align="center" prop="experience" />
-      <el-table-column label="服务人员地点(城市名)" align="center" prop="location" />
+      <el-table-column label="服务人员所在城市" align="center" prop="location" />
 <!--      <el-table-column label="所在城市id" align="center" prop="cityId" />-->
       <el-table-column label="资质认证" align="center" prop="qualification" />
       <el-table-column label="擅长的服务类型" align="center" prop="serviceType" />
       <el-table-column label="服务人员的工作周期" align="center" prop="workDay" />
-      <el-table-column label="服务人员的工作时间" align="center" prop="workTimes" />
+      <el-table-column label="服务人员的工作时间" align="center" width="300">
+        <template slot-scope="scope">
+          <div v-if="scope.row.workTimes">
+            <div>{{ getTimeRangeText(scope.row.workTimes, 0) }}</div>
+          </div>
+          <span v-else>暂未设置</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -161,8 +142,8 @@
     />
 
     <!-- 添加或修改服务人员管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
 <!--        <el-form-item label="关联的用户ID" prop="userId">-->
 <!--          <el-input v-model="form.userId" placeholder="请输入关联的用户ID" />-->
 <!--        </el-form-item>-->
@@ -178,8 +159,8 @@
         <el-form-item label="服务经验" prop="experience">
           <el-input v-model="form.experience" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="服务人员地点(城市名)" prop="location">
-          <el-input v-model="form.location" placeholder="请输入服务人员地点(城市名)" />
+        <el-form-item label="服务人员所在城市" prop="location">
+          <el-input v-model="form.location" placeholder="请输入服务人员所在城市" />
         </el-form-item>
 <!--        <el-form-item label="所在城市id" prop="cityId">-->
 <!--          <el-input v-model="form.cityId" placeholder="请输入所在城市id" />-->
@@ -189,6 +170,40 @@
         </el-form-item>
         <el-form-item label="服务人员的工作周期" prop="workDay">
           <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期" />
+        </el-form-item>
+        <el-form-item label="上午工作时间" prop="morningTime">
+          <el-time-picker
+            v-model="workTimeMorningStart"
+            format="HH:mm"
+            placeholder="起始时间"
+            style="width: 180px;"
+            @change="handleTimeChange"
+          />
+          <span style="margin: 0 10px;">至</span>
+          <el-time-picker
+            v-model="workTimeMorningEnd"
+            format="HH:mm"
+            placeholder="结束时间"
+            style="width: 180px;"
+            @change="handleTimeChange"
+          />
+        </el-form-item>
+        <el-form-item label="下午工作时间" prop="afternoonTime">
+          <el-time-picker
+            v-model="workTimeAfternoonStart"
+            format="HH:mm"
+            placeholder="起始时间"
+            style="width: 180px;"
+            @change="handleTimeChange"
+          />
+          <span style="margin: 0 10px;">至</span>
+          <el-time-picker
+            v-model="workTimeAfternoonEnd"
+            format="HH:mm"
+            placeholder="结束时间"
+            style="width: 180px;"
+            @change="handleTimeChange"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -231,7 +246,7 @@ export default {
         userId: null,
         name: null,
         phone: null,
-        status: null,
+        // status: null,
         email: null,
         experience: null,
         location: null,
@@ -241,7 +256,23 @@ export default {
         workDay: null
       },
       // 表单参数
-      form: {},
+      form: {
+        id: null,
+        userId: null,
+        name: null,
+        phone: null,
+        // status: null,
+        email: null,
+        experience: null,
+        createTime: null,
+        updateTime: null,
+        location: null,
+        cityId: null,
+        qualification: null,
+        serviceType: null,
+        workDay: null,
+        workTimes: null
+      },
       // 表单校验
       rules: {
         // userId: [
@@ -254,9 +285,19 @@ export default {
           { required: true, message: "服务人员电话不能为空", trigger: "blur" }
         ],
         location: [
-          { required: true, message: "服务人员地点(城市名)不能为空", trigger: "blur" }
+          { required: true, message: "服务人员所在城市不能为空", trigger: "blur" }
         ],
-      }
+        morningTime: [
+          { required: true, message: "请设置上午工作时间", trigger: "change" }
+        ],
+        afternoonTime: [
+          { required: true, message: "请设置下午工作时间", trigger: "change" }
+        ]
+      },
+      workTimeMorningStart: null,
+      workTimeMorningEnd: null,
+      workTimeAfternoonStart: null,
+      workTimeAfternoonEnd: null
     };
   },
   created() {
@@ -284,7 +325,7 @@ export default {
         userId: null,
         name: null,
         phone: null,
-        status: null,
+        // status: null,
         email: null,
         experience: null,
         createTime: null,
@@ -293,8 +334,13 @@ export default {
         cityId: null,
         qualification: null,
         serviceType: null,
-        workDay: null
+        workDay: null,
+        workTimes: null
       };
+      this.workTimeMorningStart = null;
+      this.workTimeMorningEnd = null;
+      this.workTimeAfternoonStart = null;
+      this.workTimeAfternoonEnd = null;
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -322,9 +368,23 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       getPersonnel(id).then(response => {
         this.form = response.data;
+        // 解析已有的工作时间
+        if (this.form.workTimes) {
+          const [morningTime, afternoonTime] = this.form.workTimes.split('|');
+          if (morningTime) {
+            const [mStart, mEnd] = morningTime.split('-');
+            this.workTimeMorningStart = this.$moment(`2000-01-01 ${mStart}`).toDate();
+            this.workTimeMorningEnd = this.$moment(`2000-01-01 ${mEnd}`).toDate();
+          }
+          if (afternoonTime) {
+            const [aStart, aEnd] = afternoonTime.split('-');
+            this.workTimeAfternoonStart = this.$moment(`2000-01-01 ${aStart}`).toDate();
+            this.workTimeAfternoonEnd = this.$moment(`2000-01-01 ${aEnd}`).toDate();
+          }
+        }
         this.open = true;
         this.title = "修改服务人员管理";
       });
@@ -364,7 +424,32 @@ export default {
       this.download('housekeeping/personnel/export', {
         ...this.queryParams
       }, `personnel_${new Date().getTime()}.xlsx`)
+    },
+    // 处理时间变化
+    handleTimeChange() {
+      if (this.workTimeMorningStart && this.workTimeMorningEnd &&
+          this.workTimeAfternoonStart && this.workTimeAfternoonEnd) {
+        const formatTime = (time) => {
+          return this.$moment(time).format('HH:mm');
+        };
+        const morningTime = `${formatTime(this.workTimeMorningStart)}-${formatTime(this.workTimeMorningEnd)}`;
+        const afternoonTime = `${formatTime(this.workTimeAfternoonStart)}-${formatTime(this.workTimeAfternoonEnd)}`;
+        this.form.workTimes = `${morningTime}|${afternoonTime}`;
+      }
+    },
+
+    // 获取显示的时间段文本
+    getTimeRangeText(workTimes, index) {
+      if (!workTimes) return '暂未设置';
+      const timeRanges = workTimes.split('|');
+      return timeRanges[index] || '暂未设置';
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.el-time-picker {
+  margin-right: 10px;
+}
+</style>

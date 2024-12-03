@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="服务名称" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -25,15 +25,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="价格" prop="price">
-        <el-input
-          v-model="queryParams.price"
-          placeholder="请输入价格"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="供选择的小时数例" prop="hours">
+      <el-form-item label="供选择的小时数例" prop="hours" label-width="180px">
         <el-input
           v-model="queryParams.hours"
           placeholder="请输入供选择的小时数例"
@@ -41,7 +33,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="每小时价格" prop="hourlyRate">
+      <el-form-item label="每小时价格" prop="hourlyRate" label-width="100px">
         <el-input
           v-model="queryParams.hourlyRate"
           placeholder="请输入每小时价格"
@@ -49,22 +41,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="供选择的天数例" prop="days">
-        <el-input
-          v-model="queryParams.days"
-          placeholder="请输入供选择的天数例"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="每天价格" prop="dailyRate">
-        <el-input
-          v-model="queryParams.dailyRate"
-          placeholder="请输入每天价格"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -104,16 +81,6 @@
           v-hasPermi="['system:service:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['system:service:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -123,11 +90,8 @@
       <el-table-column label="服务名称" align="center" prop="name" />
       <el-table-column label="服务描述" align="center" prop="description" />
       <el-table-column label="类别id" align="center" prop="categoryId" />
-      <el-table-column label="价格" align="center" prop="price" />
       <el-table-column label="供选择的小时数例" align="center" prop="hours" />
       <el-table-column label="每小时价格" align="center" prop="hourlyRate" />
-      <el-table-column label="供选择的天数例" align="center" prop="days" />
-      <el-table-column label="每天价格" align="center" prop="dailyRate" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -159,7 +123,7 @@
     <!-- 添加或修改服务对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="" prop="name">
+        <el-form-item label="服务名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="服务描述" prop="description">
@@ -168,20 +132,11 @@
         <el-form-item label="类别id" prop="categoryId">
           <el-input v-model="form.categoryId" placeholder="请输入类别id" />
         </el-form-item>
-        <el-form-item label="价格" prop="price">
-          <el-input v-model="form.price" placeholder="请输入价格" />
-        </el-form-item>
         <el-form-item label="供选择的小时数例" prop="hours">
           <el-input v-model="form.hours" placeholder="请输入供选择的小时数例" />
         </el-form-item>
         <el-form-item label="每小时价格" prop="hourlyRate">
           <el-input v-model="form.hourlyRate" placeholder="请输入每小时价格" />
-        </el-form-item>
-        <el-form-item label="供选择的天数例" prop="days">
-          <el-input v-model="form.days" placeholder="请输入供选择的天数例" />
-        </el-form-item>
-        <el-form-item label="每天价格" prop="dailyRate">
-          <el-input v-model="form.dailyRate" placeholder="请输入每天价格" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -227,8 +182,6 @@ export default {
         price: null,
         hours: null,
         hourlyRate: null,
-        days: null,
-        dailyRate: null
       },
       // 表单参数
       form: {},
@@ -265,8 +218,6 @@ export default {
         price: null,
         hours: null,
         hourlyRate: null,
-        days: null,
-        dailyRate: null
       };
       this.resetForm("form");
     },

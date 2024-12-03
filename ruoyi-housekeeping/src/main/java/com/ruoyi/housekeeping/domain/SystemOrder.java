@@ -72,6 +72,30 @@ public class SystemOrder extends BaseEntity
 //    @DateTimeFormat
     private Timestamp endTime;
 
+
+    /** 服务人员姓名 */
+    private String personnelName; // 新增字段
+
+    /** 用户名 */
+    private String userName; // 新增字段
+
+
+    public String getPersonnelName() {
+        return personnelName;
+    }
+
+    public void setPersonnelName(String personnelName) {
+        this.personnelName = personnelName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public Timestamp getEndTime() {
         return endTime;
     }

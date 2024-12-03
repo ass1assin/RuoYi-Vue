@@ -48,16 +48,6 @@
           v-hasPermi="['housekeeping:article:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['housekeeping:article:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -66,7 +56,6 @@
       <el-table-column label="文章ID" align="center" prop="id" />
       <el-table-column label="文章标题" align="center" prop="title" />
       <el-table-column label="文章内容" align="center" prop="content" />
-      <el-table-column label="作者ID" align="center" prop="authorId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -103,9 +92,6 @@
         </el-form-item>
         <el-form-item label="文章内容">
           <editor v-model="form.content" :min-height="192"/>
-        </el-form-item>
-        <el-form-item label="作者ID" prop="authorId">
-          <el-input v-model="form.authorId" placeholder="请输入作者ID" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -157,9 +143,9 @@ export default {
         content: [
           { required: true, message: "文章内容不能为空", trigger: "blur" }
         ],
-        authorId: [
-          { required: true, message: "作者ID不能为空", trigger: "blur" }
-        ],
+        // authorId: [
+        //   { required: true, message: "作者ID不能为空", trigger: "blur" }
+        // ],
       }
     };
   },
@@ -187,7 +173,7 @@ export default {
         id: null,
         title: null,
         content: null,
-        authorId: null,
+        // authorId: null,
         createTime: null,
         updateTime: null
       };
@@ -229,6 +215,9 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          // 获取纯文本内容
+          this.form.content = this.form.content.replace(/<\/?[^>]+(>|$)/g, ""); // 去除 HTML 标签
+
           if (this.form.id != null) {
             updateArticle(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
