@@ -5,15 +5,15 @@ import com.ruoyi.housekeeping.domain.SystemServicePersonnel;
 
 /**
  * 服务人员管理Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2024-07-22
  */
-public interface SystemServicePersonnelMapper 
+public interface SystemServicePersonnelMapper
 {
     /**
      * 查询服务人员管理
-     * 
+     *
      * @param id 服务人员管理主键
      * @return 服务人员管理
      */
@@ -21,7 +21,7 @@ public interface SystemServicePersonnelMapper
 
     /**
      * 查询服务人员管理列表
-     * 
+     *
      * @param systemServicePersonnel 服务人员管理
      * @return 服务人员管理集合
      */
@@ -29,23 +29,28 @@ public interface SystemServicePersonnelMapper
 
     /**
      * 新增服务人员管理
-     * 
+     *
      * @param systemServicePersonnel 服务人员管理
      * @return 结果
      */
     public int insertSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel);
 
+    public boolean insertPersonnelSchedule(SystemServicePersonnel systemServicePersonnel);
+
     /**
      * 修改服务人员管理
-     * 
+     *
      * @param systemServicePersonnel 服务人员管理
      * @return 结果
      */
     public int updateSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel);
 
+
+    public int deletePersonnelSchedule(Long id);
+//    public int updatePersonnelSchedule(SystemServicePersonnel personnel);
     /**
      * 删除服务人员管理
-     * 
+     *
      * @param id 服务人员管理主键
      * @return 结果
      */
@@ -53,7 +58,7 @@ public interface SystemServicePersonnelMapper
 
     /**
      * 批量删除服务人员管理
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */

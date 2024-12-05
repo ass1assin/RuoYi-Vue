@@ -94,11 +94,11 @@
     <el-table v-loading="loading" :data="personnelList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="服务人员ID" align="center" prop="id" />
-<!--      <el-table-column label="关联的用户ID" align="center" prop="userId" />-->
+
       <el-table-column label="服务人员姓名" align="center" prop="name" />
       <el-table-column label="服务人员电话" align="center" prop="phone" />
-<!--      <el-table-column label="服务人员状态" align="center" prop="status" />-->
-      <el-table-column label="服务人员邮箱" align="center" prop="email" />
+
+      <el-table-column label="��箱" align="center" prop="email" />
       <el-table-column label="服务经验" align="center" prop="experience" />
       <el-table-column label="服务人员所在城市" align="center" prop="location" />
 <!--      <el-table-column label="所在城市id" align="center" prop="cityId" />-->
@@ -150,7 +150,7 @@
           <el-input v-model="form.email" placeholder="请输入服务人员邮箱" />
         </el-form-item>
         <el-form-item label="服务经验" prop="experience">
-          <el-input v-model="form.experience" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.experience" type="textarea" placeholder="输内���" />
         </el-form-item>
         <el-form-item label="服务人员所在城市" prop="location">
           <el-input v-model="form.location" placeholder="请输入服务人员所在城市" />
@@ -164,6 +164,45 @@
         <el-form-item label="服务人员的工作周期" prop="workDay">
           <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期" />
         </el-form-item>
+        <el-form-item label="擅长的服务类型" prop="serviceType">
+          <el-select 
+            v-model="selectedServiceTypes" 
+            multiple 
+            placeholder="请选择服务类型"
+            @change="handleServiceTypeChange"
+          >
+            <el-option
+              v-for="type in serviceTypes"
+              :key="type.id"
+              :label="type.name"
+              :value="type.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工作时间段1" prop="workTime1">
+          <el-time-picker
+            v-model="workTime1"
+            is-range
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="HH:mm:ss"
+            format="HH:mm:ss"
+            @change="handleWorkTime1Change"
+          />
+        </el-form-item>
+        <el-form-item label="工作时间段2" prop="workTime2">
+          <el-time-picker
+            v-model="workTime2"
+            is-range
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="HH:mm:ss"
+            format="HH:mm:ss"
+            @change="handleWorkTime2Change"
+          />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -175,6 +214,7 @@
 
 <script>
 import { listPersonnel, getPersonnel, delPersonnel, addPersonnel, updatePersonnel } from "@/api/housekeeping/personnel";
+import { yuanlistCategory } from "@/api/system/category"; // 导入获取类别列的数
 
 export default {
   name: "Personnel",
@@ -215,7 +255,25 @@ export default {
         workDay: null
       },
       // 表单参数
-      form: {},
+      form: {
+        id: null,
+        userId: null,
+        name: null,
+        phone: null,
+        // status: null,
+        email: null,
+        experience: null,
+        createTime: null,
+        updateTime: null,
+        location: null,
+        cityId: null,
+        qualification: null,
+        serviceType: '', // 用于存储转换后的字符串
+        workTimeStart1: '',
+        workTimeEnd1: '',
+        workTimeStart2: '',
+        workTimeEnd2: ''
+      },
       // 表单校验
       rules: {
         // userId: [
@@ -230,11 +288,16 @@ export default {
         location: [
           { required: true, message: "服务人员所在城市不能为空", trigger: "blur" }
         ],
-      }
+      },
+      serviceTypes: [], // 存储服务类型列表
+      selectedServiceTypes: [], // 用于存储选中的服务类型ID数组
+      workTime1: null,
+      workTime2: null
     };
   },
   created() {
     this.getList();
+    this.getServiceTypes(); // 获取服务类型列表
   },
   methods: {
     /** 查询服务人员管理列表 */
@@ -266,9 +329,15 @@ export default {
         location: null,
         cityId: null,
         qualification: null,
-        serviceType: null,
-        workDay: null
+        serviceType: '', // 用于存储转换后的字符串
+        workTimeStart1: '',
+        workTimeEnd1: '',
+        workTimeStart2: '',
+        workTimeEnd2: ''
       };
+      this.selectedServiceTypes = [];
+      this.workTime1 = null;
+      this.workTime2 = null;
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -296,9 +365,64 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
+      console.log('修改操作 - 行数据:', row);
+      
       getPersonnel(id).then(response => {
+        console.log('获取到的人员详情:', response.data);
         this.form = response.data;
+        
+        // 处理 serviceType
+        if (this.form.serviceType) {
+          console.log('处理前的 serviceType:', this.form.serviceType, typeof this.form.serviceType);
+          
+          let serviceTypeArray = [];
+          if (typeof this.form.serviceType === 'string') {
+            // 尝试解析可能的 JSON 字符串
+            try {
+              const parsed = JSON.parse(this.form.serviceType);
+              serviceTypeArray = Array.isArray(parsed) ? parsed : this.form.serviceType.split(',');
+            } catch (e) {
+              serviceTypeArray = this.form.serviceType.split(',');
+            }
+          } else if (Array.isArray(this.form.serviceType)) {
+            serviceTypeArray = this.form.serviceType;
+          } else {
+            serviceTypeArray = [this.form.serviceType];
+          }
+          
+          console.log('解析后的数组:', serviceTypeArray);
+          
+          this.selectedServiceTypes = serviceTypeArray
+            .filter(id => id !== null && id !== undefined && id !== '')
+            .map(id => {
+              const numId = Number(id);
+              return isNaN(numId) ? null : numId;
+            })
+            .filter(id => id !== null)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          
+          console.log('最终的 selectedServiceTypes:', this.selectedServiceTypes);
+        }
+        
+        // 解析工作时间
+        if (this.form.workTimes) {
+          console.log('处理前的工作时间:', this.form.workTimes);
+          const times = this.form.workTimes.split(',');
+          if (times[0]) {
+            const [start1, end1] = times[0].split(' - ');
+            this.workTime1 = [start1, end1];
+          }
+          if (times[1]) {
+            const [start2, end2] = times[1].split(' - ');
+            this.workTime2 = [start2, end2];
+          }
+          console.log('处理后的工作时间:', {
+            workTime1: this.workTime1,
+            workTime2: this.workTime2
+          });
+        }
+        
         this.open = true;
         this.title = "修改服务人员管理";
       });
@@ -307,6 +431,11 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          // 确保serviceType已正确设置
+          if (this.selectedServiceTypes.length > 0) {
+            this.form.serviceType = this.selectedServiceTypes.join(',');
+          }
+          
           if (this.form.id != null) {
             updatePersonnel(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -323,7 +452,7 @@ export default {
         }
       });
     },
-    /** 删除按钮操作 */
+    /** 除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal.confirm('是否确认删除服务人员管理编号为"' + ids + '"的数据项？').then(function() {
@@ -359,7 +488,43 @@ export default {
         3: '已取消'
       }
       return statusMap[status] || '未知状态'
-    }
+    },
+    /** 获取服务类型列表 */
+    getServiceTypes() {
+      yuanlistCategory().then(response => {
+        if (response.code === 200) {
+          this.serviceTypes = response.rows;
+          console.log('获取到的服务类型列表:', this.serviceTypes);
+        } else {
+          this.$message.error(response.msg || '获取服务类型失败');
+        }
+      }).catch(error => {
+        console.error('获取服务类型错误:', error);
+        this.$message.error('获取服务类型失败');
+      });
+    },
+    // 处理服务类型选择变化
+    handleServiceTypeChange(val) {
+      this.form.serviceType = val.join(',');
+    },
+    handleWorkTime1Change(val) {
+      if (val) {
+        this.form.workTimeStart1 = val[0];
+        this.form.workTimeEnd1 = val[1];
+      } else {
+        this.form.workTimeStart1 = '';
+        this.form.workTimeEnd1 = '';
+      }
+    },
+    handleWorkTime2Change(val) {
+      if (val) {
+        this.form.workTimeStart2 = val[0];
+        this.form.workTimeEnd2 = val[1];
+      } else {
+        this.form.workTimeStart2 = '';
+        this.form.workTimeEnd2 = '';
+      }
+    },
   }
 };
 </script>

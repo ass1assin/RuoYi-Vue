@@ -59,8 +59,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectSystemServicePersonnelById" parameterType="Long" resultMap="SystemServicePersonnelResult">
-        <include refid="selectSystemServicePersonnelVo"/>
-        where id = #{id}
+        SELECT
+        ssp.id,
+        ssp.user_id,
+        ssp.name,
+        ssp.phone,
+        ssp.email,
+        ssp.experience,
+        ssp.create_time,
+        ssp.update_time,
+        ssp.location,
+        ssp.qualification,
+        GROUP_CONCAT(DISTINCT sc.name ORDER BY FIELD(sc.id, ssp.service_type)) AS service_type,
+        ssp.work_day,
+        GROUP_CONCAT(DISTINCT CONCAT(sps.start_time, ' - ', sps.end_time) ORDER BY sps.start_time) AS work_times
+        FROM
+        system_service_personnel AS ssp
+        LEFT JOIN
+        system_personnel_schedule AS sps ON ssp.id = sps.personnel_id
+        LEFT JOIN
+        system_service_category AS sc ON FIND_IN_SET(sc.id, ssp.service_type) > 0
+        where ssp.id = #{id}
+        GROUP BY
+        ssp.id, ssp.user_id, ssp.name, ssp.phone, ssp.email, ssp.experience,
+        ssp.create_time, ssp.update_time, ssp.location, ssp.qualification,
+        ssp.service_type, ssp.work_day;
     </select>
 
     <insert id="insertSystemServicePersonnel" parameterType="SystemServicePersonnel" useGeneratedKeys="true" keyProperty="id">
@@ -74,7 +97,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="location != null and location != ''">location,</if>
-         </trim>
+            <if test="serviceType != null">service_type,</if>
+            <if test="workDay != null">work_day,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId},</if>
             <if test="name != null and name != ''">#{name},</if>
@@ -84,8 +109,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="location != null and location != ''">#{location},</if>
-         </trim>
+            <if test="serviceType != null">#{serviceType},</if>
+            <if test="workDay != null">#{workDay},</if>
+        </trim>
     </insert>
+
+    <insert id="insertPersonnelSchedule">
+        insert into system_personnel_schedule (personnel_id, start_time, end_time)
+        values
+        <if test="workTimeStart1 != null and workTimeEnd1 != null">
+            (#{id}, #{workTimeStart1}, #{workTimeEnd1})
+        </if>
+        <if test="workTimeStart2 != null and workTimeEnd2 != null">
+            ,(#{id}, #{workTimeStart2}, #{workTimeEnd2})
+        </if>
+    </insert>
+
 
     <update id="updateSystemServicePersonnel" parameterType="SystemServicePersonnel">
         update system_service_personnel
@@ -98,9 +137,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="location != null and location != ''">location = #{location},</if>
+            <if test="serviceType != null">service_type = #{serviceType},</if>
+            <if test="workDay != null">work_day = #{workDay},</if>
         </trim>
         where id = #{id}
     </update>
+
+    <!-- 删除原有的工作时间记录 -->
+    <delete id="deletePersonnelSchedule">
+        delete from system_personnel_schedule where personnel_id = #{id}
+    </delete>
+
+
+<!--    <update id="updateSystemServicePersonnel" parameterType="SystemServicePersonnel">-->
+<!--        update system_service_personnel-->
+<!--        <trim prefix="SET" suffixOverrides=",">-->
+<!--            <if test="userId != null">user_id = #{userId},</if>-->
+<!--            <if test="name != null and name != ''">name = #{name},</if>-->
+<!--            <if test="phone != null and phone != ''">phone = #{phone},</if>-->
+<!--            <if test="email != null">email = #{email},</if>-->
+<!--            <if test="experience != null">experience = #{experience},</if>-->
+<!--            <if test="createTime != null">create_time = #{createTime},</if>-->
+<!--            <if test="updateTime != null">update_time = #{updateTime},</if>-->
+<!--            <if test="location != null and location != ''">location = #{location},</if>-->
+<!--        </trim>-->
+<!--        where id = #{id}-->
+<!--    </update>-->
 
     <delete id="deleteSystemServicePersonnelById" parameterType="Long">
         delete from system_service_personnel where id = #{id}

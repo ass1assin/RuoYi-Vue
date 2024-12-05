@@ -7,22 +7,23 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.housekeeping.mapper.SystemServicePersonnelMapper;
 import com.ruoyi.housekeeping.domain.SystemServicePersonnel;
 import com.ruoyi.housekeeping.service.ISystemServicePersonnelService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务人员管理Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2024-07-22
  */
 @Service
-public class SystemServicePersonnelServiceImpl implements ISystemServicePersonnelService 
+public class SystemServicePersonnelServiceImpl implements ISystemServicePersonnelService
 {
     @Autowired
     private SystemServicePersonnelMapper systemServicePersonnelMapper;
 
     /**
      * 查询服务人员管理
-     * 
+     *
      * @param id 服务人员管理主键
      * @return 服务人员管理
      */
@@ -34,7 +35,7 @@ public class SystemServicePersonnelServiceImpl implements ISystemServicePersonne
 
     /**
      * 查询服务人员管理列表
-     * 
+     *
      * @param systemServicePersonnel 服务人员管理
      * @return 服务人员管理
      */
@@ -46,33 +47,67 @@ public class SystemServicePersonnelServiceImpl implements ISystemServicePersonne
 
     /**
      * 新增服务人员管理
-     * 
-     * @param systemServicePersonnel 服务人员管理
+     *
+     * @param
      * @return 结果
      */
-    @Override
-    public int insertSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel)
-    {
-        systemServicePersonnel.setCreateTime(DateUtils.getNowDate());
-        return systemServicePersonnelMapper.insertSystemServicePersonnel(systemServicePersonnel);
+//    @Override
+//    public int insertSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel)
+//    {
+//        systemServicePersonnel.setCreateTime(DateUtils.getNowDate());
+//        return systemServicePersonnelMapper.insertSystemServicePersonnel(systemServicePersonnel);
+//    }
+    @Transactional
+    public int insertSystemServicePersonnel(SystemServicePersonnel personnel) {
+        // 1. 插入服务人员基本信息
+        int rows = systemServicePersonnelMapper.insertSystemServicePersonnel(personnel);
+
+        // 2. 如果有工作时间，插入排班信息
+//        if (personnel.getWorkTime1() != null || personnel.getWorkTime2() != null) {
+            systemServicePersonnelMapper.insertPersonnelSchedule(personnel);
+//        }
+
+        return rows;
     }
 
     /**
      * 修改服务人员管理
-     * 
+     *
      * @param systemServicePersonnel 服务人员管理
      * @return 结果
      */
-    @Override
-    public int updateSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel)
-    {
-        systemServicePersonnel.setUpdateTime(DateUtils.getNowDate());
-        return systemServicePersonnelMapper.updateSystemServicePersonnel(systemServicePersonnel);
+//    @Override
+//    public int updateSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel)
+//    {
+//        systemServicePersonnel.setUpdateTime(DateUtils.getNowDate());
+//        return systemServicePersonnelMapper.updateSystemServicePersonnel(systemServicePersonnel);
+//    }
+//    @Transactional
+//    public int updateSystemServicePersonnel(SystemServicePersonnel personnel) {
+//        int rows = systemServicePersonnelMapper.updateSystemServicePersonnel(personnel);
+//        if (rows > 0) {
+//            systemServicePersonnelMapper.updatePersonnelSchedule(personnel);
+//        }
+//        return rows;
+//    }
+    @Transactional
+    public int updateSystemServicePersonnel(SystemServicePersonnel personnel) {
+        int rows = systemServicePersonnelMapper.updateSystemServicePersonnel(personnel);
+        if (rows > 0) {
+            // 先删除原有的工作时间记录
+            systemServicePersonnelMapper.deletePersonnelSchedule(personnel.getId());
+            // 如果有新的工作时间，则插入
+            if ((personnel.getWorkTimeStart1() != null && personnel.getWorkTimeEnd1() != null) ||
+                    (personnel.getWorkTimeStart2() != null && personnel.getWorkTimeEnd2() != null)) {
+                systemServicePersonnelMapper.insertPersonnelSchedule(personnel);
+            }
+        }
+        return rows;
     }
 
     /**
      * 批量删除服务人员管理
-     * 
+     *
      * @param ids 需要删除的服务人员管理主键
      * @return 结果
      */
@@ -84,7 +119,7 @@ public class SystemServicePersonnelServiceImpl implements ISystemServicePersonne
 
     /**
      * 删除服务人员管理信息
-     * 
+     *
      * @param id 服务人员管理主键
      * @return 结果
      */

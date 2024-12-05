@@ -5,6 +5,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.time.LocalTime;
+import java.util.Date;
+
 /**
  * 服务人员管理对象 system_service_personnel
  *
@@ -49,6 +52,42 @@ public class SystemServicePersonnel extends BaseEntity
     private String workDay;
 
     private String workTimes;
+    private String workTimeStart1;  // 第一段开始时间
+    private String workTimeEnd1;    // 第一段结束时间
+    private String workTimeStart2;  // 第二段开始时间
+    private String workTimeEnd2;    // 第二段结束时间
+
+    public String getWorkTimeStart1() {
+        return workTimeStart1;
+    }
+
+    public void setWorkTimeStart1(String workTimeStart1) {
+        this.workTimeStart1 = workTimeStart1;
+    }
+
+    public String getWorkTimeEnd1() {
+        return workTimeEnd1;
+    }
+
+    public void setWorkTimeEnd1(String workTimeEnd1) {
+        this.workTimeEnd1 = workTimeEnd1;
+    }
+
+    public String getWorkTimeStart2() {
+        return workTimeStart2;
+    }
+
+    public void setWorkTimeStart2(String workTimeStart2) {
+        this.workTimeStart2 = workTimeStart2;
+    }
+
+    public String getWorkTimeEnd2() {
+        return workTimeEnd2;
+    }
+
+    public void setWorkTimeEnd2(String workTimeEnd2) {
+        this.workTimeEnd2 = workTimeEnd2;
+    }
 
     public String getWorkTimes() {
         return workTimes;

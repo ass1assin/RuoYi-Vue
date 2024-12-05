@@ -131,7 +131,7 @@
         <el-form-item label="服务描述" prop="description">
           <el-input v-model="form.description" placeholder="请输入服务描述" />
         </el-form-item>
-        <el-form-item label="类别id" prop="categoryId">
+        <el-form-item label="服务类别" prop="categoryId">
           <el-select v-model="form.categoryId" placeholder="请选择类别">
             <el-option
               v-for="category in categoryList"
