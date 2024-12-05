@@ -102,7 +102,7 @@
       <el-table-column label="服务经验" align="center" prop="experience" />
       <el-table-column label="服务人员所在城市" align="center" prop="location" />
 <!--      <el-table-column label="所在城市id" align="center" prop="cityId" />-->
-      <el-table-column label="资质认证" align="center" prop="qualification" />
+<!--      <el-table-column label="资质认证" align="center" prop="qualification" />-->
       <el-table-column label="擅长的服务类型" align="center" prop="serviceType" />
       <el-table-column label="服务人员的工作周期" align="center" prop="workDay" />
       <el-table-column label="服务人员的工作时间" align="center" prop="workTimes"/>
@@ -135,8 +135,8 @@
     />
 
     <!-- 添加或修改服务人员管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
 <!--        <el-form-item label="关联的用户ID" prop="userId">-->
 <!--          <el-input v-model="form.userId" placeholder="请输入关联的用户ID" />-->
 <!--        </el-form-item>-->
@@ -158,9 +158,9 @@
 <!--        <el-form-item label="所在城市id" prop="cityId">-->
 <!--          <el-input v-model="form.cityId" placeholder="请输入所在城市id" />-->
 <!--        </el-form-item>-->
-        <el-form-item label="资质认证" prop="qualification">
-          <el-input v-model="form.qualification" placeholder="请输入资质认证" />
-        </el-form-item>
+<!--        <el-form-item label="资质认证" prop="qualification">-->
+<!--          <el-input v-model="form.qualification" placeholder="请输入资质认证" />-->
+<!--        </el-form-item>-->
         <el-form-item label="服务人员的工作周期" prop="workDay">
           <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期" />
         </el-form-item>
@@ -349,7 +349,7 @@ export default {
       }
       return statusMap[status] || ''
     },
-    
+
     // 获取状态显示文本
     getStatusText(status) {
       const statusMap = {

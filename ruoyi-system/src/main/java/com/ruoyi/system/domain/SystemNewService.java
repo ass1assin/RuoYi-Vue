@@ -5,9 +5,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 /**
  * 服务对象 system_service
- * 
+ *
  * @author ruoyi
  * @date 2024-11-28
  */
@@ -50,84 +53,104 @@ public class SystemNewService extends BaseEntity
     @Excel(name = "每天价格")
     private Long dailyRate;
 
-    public void setId(Long id) 
+    private String categoryName;
+
+    private List<String> imageUrls;  // 用来接收前端传来的图片 URL
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setName(String name) 
+    public void setName(String name)
     {
         this.name = name;
     }
 
-    public String getName() 
+    public String getName()
     {
         return name;
     }
-    public void setDescription(String description) 
+    public void setDescription(String description)
     {
         this.description = description;
     }
 
-    public String getDescription() 
+    public String getDescription()
     {
         return description;
     }
-    public void setCategoryId(Long categoryId) 
+    public void setCategoryId(Long categoryId)
     {
         this.categoryId = categoryId;
     }
 
-    public Long getCategoryId() 
+    public Long getCategoryId()
     {
         return categoryId;
     }
-    public void setPrice(Long price) 
+    public void setPrice(Long price)
     {
         this.price = price;
     }
 
-    public Long getPrice() 
+    public Long getPrice()
     {
         return price;
     }
-    public void setHours(String hours) 
+    public void setHours(String hours)
     {
         this.hours = hours;
     }
 
-    public String getHours() 
+    public String getHours()
     {
         return hours;
     }
-    public void setHourlyRate(Long hourlyRate) 
+    public void setHourlyRate(Long hourlyRate)
     {
         this.hourlyRate = hourlyRate;
     }
 
-    public Long getHourlyRate() 
+    public Long getHourlyRate()
     {
         return hourlyRate;
     }
-    public void setDays(Long days) 
+    public void setDays(Long days)
     {
         this.days = days;
     }
 
-    public Long getDays() 
+    public Long getDays()
     {
         return days;
     }
-    public void setDailyRate(Long dailyRate) 
+    public void setDailyRate(Long dailyRate)
     {
         this.dailyRate = dailyRate;
     }
 
-    public Long getDailyRate() 
+    public Long getDailyRate()
     {
         return dailyRate;
     }

@@ -6,6 +6,7 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -39,7 +40,25 @@ public class SystemService implements Serializable
     @Excel(name = "价格")
     private Long price;
 
+    private String categoryName;
 
+    private BigDecimal hourRate;
+
+    public BigDecimal getHourRate() {
+        return hourRate;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public void setHourRate(BigDecimal hourRate) {
+        this.hourRate = hourRate;
+    }
 
     public void setId(Long id)
     {

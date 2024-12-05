@@ -12,7 +12,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="price"    column="price"    />
         <result property="hours"    column="hours"    />
         <result property="hourlyRate"    column="hourly_rate"    />
-
+        <result property="categoryName"    column="category_name"    />
+        <collection property="imageUrls" ofType="String">
+            <result column="image_url" />
+        </collection>
     </resultMap>
 
     <sql id="selectSystemNewServiceVo">
@@ -20,24 +23,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSystemNewServiceList" parameterType="SystemNewService" resultMap="SystemNewServiceResult">
-        <include refid="selectSystemNewServiceVo"/>
+        select
+        ss.*,
+        ssc.name as category_name,
+        sii.image_url as image_url  <!-- 添加图片字段 -->
+        from system_service as ss
+        left join system_service_category as ssc on ss.category_id = ssc.id
+        left join system_service_image as sii on ss.id = sii.service_id  <!-- 左连接图片表 -->
         <where>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
-            <if test="categoryId != null "> and category_id = #{categoryId}</if>
-            <if test="price != null "> and price = #{price}</if>
-            <if test="hours != null  and hours != ''"> and hours = #{hours}</if>
-            <if test="hourlyRate != null "> and hourly_rate = #{hourlyRate}</if>
-
+            <if test="name != null  and name != ''"> and ss.name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and ss.description = #{description}</if>
+            <if test="categoryName != null "> and ssc.name = #{categoryName}</if>
+            <if test="hourlyRate != null "> and ss.hourly_rate = #{hourlyRate}</if>
         </where>
     </select>
 
     <select id="selectSystemNewServiceById" parameterType="Long" resultMap="SystemNewServiceResult">
-        <include refid="selectSystemNewServiceVo"/>
-        where id = #{id}
+        select
+        ss.*,
+        ssc.name as category_name,
+        sii.image_url as image_url  <!-- 添加图片字段 -->
+        from system_service as ss
+        left join system_service_category as ssc on ss.category_id = ssc.id
+        left join system_service_image as sii on ss.id = sii.service_id
+        where ss.id = #{id}
     </select>
 
-    <insert id="insertSystemNewService" parameterType="SystemNewService">
+    <insert id="insertSystemNewService" parameterType="SystemNewService" useGeneratedKeys="true" keyProperty="id">
         insert into system_service
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -60,6 +72,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
          </trim>
     </insert>
+
+
+    <insert id="insertServiceImages" parameterType="java.util.Map">
+        insert into system_service_image (image_url, service_id)
+        values
+        <foreach collection="imageUrls" item="imageUrl" separator=",">
+            (#{imageUrl}, #{serviceId})
+        </foreach>
+    </insert>
+<!--    <insert id="insertServiceImages" parameterType="java.util.Map">-->
+<!--        <foreach collection="imageUrls" item="imageUrl" separator=";">-->
+<!--            insert into system_service_image (image_url, service_id)-->
+<!--            values (#{imageUrl}, #{serviceId})-->
+<!--        </foreach>-->
+<!--    </insert>-->
+
 
     <update id="updateSystemNewService" parameterType="SystemNewService">
         update system_service

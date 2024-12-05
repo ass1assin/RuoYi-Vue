@@ -36,7 +36,7 @@ export default {
   data() {
     return {
       title: '养老上门家政后台',
-      logo: logoImg
+      // logo: logoImg
     }
   }
 }

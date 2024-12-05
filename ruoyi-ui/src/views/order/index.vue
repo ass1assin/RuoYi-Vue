@@ -73,7 +73,16 @@
       <el-table-column label="服务名称" align="center" prop="serviceName" />
       <el-table-column label="服务人员" align="center" prop="personnelName" />
       <el-table-column label="用户名" align="center" prop="userName" />
-      <el-table-column label="图片地址" align="center" prop="imageUrl" />
+<!--      <el-table-column label="图片地址" align="center" prop="imageUrl" />-->
+      <el-table-column label="服务图片" align="center">
+        <template slot-scope="scope">
+          <el-image
+            :src="scope.row.imageUrl"
+            style="width: 50px; height: 50px"
+            fit="cover"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="订单总价" align="center" prop="totalPrice" />
       <el-table-column label="订单状态" align="center">
         <template slot-scope="scope">
@@ -126,7 +135,16 @@
           <span>{{ form.userName }}</span>
         </el-form-item>
         <el-form-item label="图片地址">
-          <span>{{ form.imageUrl }}</span>
+<!--          <span>{{ form.imageUrl }}</span>-->
+<!--          <el-table-column label="服务图片" align="center">-->
+<!--            <template slot-scope="scope">-->
+              <el-image
+                :src="form.imageUrl"
+                style="width: 150px; height: 150px"
+                fit="cover"
+              />
+<!--            </template>-->
+<!--          </el-table-column>-->
         </el-form-item>
         <el-form-item label="订单总价">
           <span>{{ form.totalPrice }}</span>

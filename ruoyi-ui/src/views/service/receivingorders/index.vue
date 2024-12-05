@@ -53,10 +53,17 @@
       <el-table-column label="主键ID" align="center" prop="id" />
       <el-table-column label="订单ID" align="center" prop="orderId" />
       <el-table-column label="用户名" align="center" prop="userName" />
-      <el-table-column label="手机号" align="center" prop="phoneNumber" />
       <el-table-column label="服务人员姓名" align="center" prop="personnelName" />
       <el-table-column label="服务名称" align="center" prop="serviceName" />
-      <el-table-column label="图片地址" align="center" prop="imageUrl" />
+      <el-table-column label="服务图片" align="center">
+        <template slot-scope="scope">
+          <el-image
+            :src="scope.row.imageUrl"
+            style="width: 50px; height: 50px"
+            fit="cover"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="订单总价" align="center" prop="totalPrice" />
       <el-table-column label="订单状态" align="center" prop="status">
         <template slot-scope="scope">

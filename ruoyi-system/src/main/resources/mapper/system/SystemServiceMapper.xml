@@ -3,13 +3,15 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SystemServiceMapper">
-    
+
     <resultMap type="SystemService" id="SystemServiceResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="description"    column="description"    />
         <result property="categoryId"    column="category_id"    />
         <result property="price"    column="price"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="hourRate"    column="hour_rate"    />
     </resultMap>
 
     <sql id="selectSystemServiceVo">
@@ -17,15 +19,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSystemServiceList" parameterType="SystemService" resultMap="SystemServiceResult">
-        <include refid="selectSystemServiceVo"/>
-        <where>  
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
-            <if test="categoryId != null "> and category_id = #{categoryId}</if>
-            <if test="price != null "> and price = #{price}</if>
+        select
+        ss.*,
+        ssc.name as category_name
+        from system_service as ss
+        left join system_service_category as ssc on ss.category_id = ssc.id
+        <where>
+            <if test="name != null  and name != ''"> and ss.name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and ss.description = #{description}</if>
+            <if test="categoryName != null "> and category_name = #{categoryName}</if>
+            <if test="hourRate != null "> and hour_rate = #{hourRate}</if>
         </where>
     </select>
-    
+
     <select id="selectSystemServiceById" parameterType="Long" resultMap="SystemServiceResult">
         <include refid="selectSystemServiceVo"/>
         where id = #{id}
@@ -34,14 +40,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSystemService" parameterType="SystemService">
         insert into system_service
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
             <if test="name != null">name,</if>
             <if test="description != null">description,</if>
             <if test="categoryId != null">category_id,</if>
             <if test="price != null">price,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">#{id},</if>
             <if test="name != null">#{name},</if>
             <if test="description != null">#{description},</if>
             <if test="categoryId != null">#{categoryId},</if>
@@ -65,7 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemServiceByIds" parameterType="String">
-        delete from system_service where id in 
+        delete from system_service where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

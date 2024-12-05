@@ -42,7 +42,20 @@
       <el-table-column label="服务名" align="center" prop="serviceName" />
       <el-table-column label="评分" align="center" prop="rating" />
       <el-table-column label="评论内容" align="center" prop="content" />
-      <el-table-column label="评论图片" align="center" prop="imageUrls" />
+      <el-table-column label="评论图片" align="center">
+        <template slot-scope="scope">
+          <div v-if="scope.row.imageUrls">
+            <el-image
+              v-for="(imageUrl, index) in scope.row.imageUrls.split(',')"
+              :key="index"
+              :src="imageUrl"
+              style="width: 50px; height: 50px; margin-right: 5px;"
+              fit="cover"
+            />
+          </div>
+        </template>
+      </el-table-column>
+
 <!--      <el-table-column label="父评论" align="center" prop="parentId" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -76,7 +89,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户编号" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户编号" />
+          <el-input v-model="form.userId" placeholder="请输入用户��号" />
         </el-form-item>
         <el-form-item label="服务ID" prop="serviceId">
           <el-input v-model="form.serviceId" placeholder="请输入服务ID" />
