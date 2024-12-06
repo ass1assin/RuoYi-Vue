@@ -27,6 +27,25 @@ public class SystemOrders implements Serializable {
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")  // 添加此注解，指定日期格式
     private Timestamp startTime;       // 开始时间
     private Timestamp endTime;         // 结束时间
+    private String phoneNumber;              // 联系方式（可添加以存储用户联系方式）
+    private String consigneeName;
+
+
+    public String getConsigneeName() {
+        return consigneeName;
+    }
+
+    public void setConsigneeName(String consigneeName) {
+        this.consigneeName = consigneeName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public Timestamp getEndTime() {
         return endTime;

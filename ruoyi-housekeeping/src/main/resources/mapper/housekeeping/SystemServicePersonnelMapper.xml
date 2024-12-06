@@ -149,21 +149,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
 
-<!--    <update id="updateSystemServicePersonnel" parameterType="SystemServicePersonnel">-->
-<!--        update system_service_personnel-->
-<!--        <trim prefix="SET" suffixOverrides=",">-->
-<!--            <if test="userId != null">user_id = #{userId},</if>-->
-<!--            <if test="name != null and name != ''">name = #{name},</if>-->
-<!--            <if test="phone != null and phone != ''">phone = #{phone},</if>-->
-<!--            <if test="email != null">email = #{email},</if>-->
-<!--            <if test="experience != null">experience = #{experience},</if>-->
-<!--            <if test="createTime != null">create_time = #{createTime},</if>-->
-<!--            <if test="updateTime != null">update_time = #{updateTime},</if>-->
-<!--            <if test="location != null and location != ''">location = #{location},</if>-->
-<!--        </trim>-->
-<!--        where id = #{id}-->
-<!--    </update>-->
-
     <delete id="deleteSystemServicePersonnelById" parameterType="Long">
         delete from system_service_personnel where id = #{id}
     </delete>

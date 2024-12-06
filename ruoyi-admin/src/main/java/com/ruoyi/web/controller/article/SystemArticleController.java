@@ -37,7 +37,7 @@ public class SystemArticleController extends BaseController
     /**
      * 查询文章管理列表
      */
-    @PreAuthorize("@ss.hasPermi('housekeeping:article:list')")
+//    @PreAuthorize("@ss.hasPermi('housekeeping:article:list')")
     @GetMapping("/list")
     public TableDataInfo list(SystemArticle systemArticle)
     {
@@ -62,7 +62,7 @@ public class SystemArticleController extends BaseController
     /**
      * 获取文章管理详细信息
      */
-    @PreAuthorize("@ss.hasPermi('housekeeping:article:query')")
+//    @PreAuthorize("@ss.hasPermi('housekeeping:article:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

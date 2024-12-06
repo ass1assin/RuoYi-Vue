@@ -138,6 +138,19 @@
         </trim>
     </insert>
 
+    <select id="selectOrdersToUpdate" parameterType="java.sql.Timestamp" resultType="SystemOrder">
+        SELECT
+            o.id,
+            o.order_id,
+            o.personnel_id,
+            o.service_id,
+            o.user_id,
+            o.status,
+            o.end_time
+        FROM system_order o
+        WHERE o.status = 1  AND o.end_time &lt; #{currentTime}
+    </select>
+
     <update id="updateSystemReceivingOrders" parameterType="SystemOrder">
         update system_order
         <trim prefix="SET" suffixOverrides=",">

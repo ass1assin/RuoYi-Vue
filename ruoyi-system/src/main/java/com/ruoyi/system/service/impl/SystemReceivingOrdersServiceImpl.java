@@ -7,8 +7,10 @@ import com.ruoyi.housekeeping.mapper.SystemOrderMapper;
 import com.ruoyi.system.mapper.SystemReceivingOrdersMapper;
 import com.ruoyi.system.service.ISystemReceivingOrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -45,6 +47,22 @@ public class SystemReceivingOrdersServiceImpl implements ISystemReceivingOrdersS
     public List<SystemOrder> selectSystemReceivingOrdersList(SystemOrder systemOrder)
     {
         return systemReceivingOrdersMapper.selectSystemReceivingOrdersList(systemOrder);
+    }
+
+    // 定时任务：每分钟检查一次
+    @Scheduled(cron = "0 * * * * ?")  // 这里的 cron 表达式表示每分钟执行一次
+    public void checkAndUpdateOrderStatus() {
+        // 获取当前时间
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+        // 查询结束时间大于当前时间且状态不为2的订单
+        List<SystemOrder> ordersToUpdate = systemReceivingOrdersMapper.selectOrdersToUpdate(currentTime);
+
+        // 更新订单状态
+        for (SystemOrder order : ordersToUpdate) {
+            order.setStatus(2L);  // 设置状态为 2
+            systemReceivingOrdersMapper.updateSystemReceivingOrders(order);
+        }
     }
 
     public List<SystemServicePersonnel> getAvailablePersonnel(SystemOrder systemOrder) {

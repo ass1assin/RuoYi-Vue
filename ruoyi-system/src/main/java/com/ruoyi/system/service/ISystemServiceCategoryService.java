@@ -34,7 +34,7 @@ public interface ISystemServiceCategoryService
     /**
      * 小程序查询服务种类列表详情页
      */
-    public SystemService selectServiceCategoryDetail(Long id);
+    public SystemService selectServiceCategoryDetail(SystemService systemService);
     /**
      * 新增服务种类
      *

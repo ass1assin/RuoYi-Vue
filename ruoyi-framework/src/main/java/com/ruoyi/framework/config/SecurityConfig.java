@@ -121,6 +121,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 添加以下这一行，允许访问系统分类列表接口
                 .antMatchers("/system/category/**").permitAll()
                 .antMatchers("/system/city/**").permitAll()
+                .antMatchers("/housekeeping/article/**").permitAll()
                 .antMatchers("/system/wechat/**").permitAll()
                 .antMatchers("/wechat/pay/**").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证

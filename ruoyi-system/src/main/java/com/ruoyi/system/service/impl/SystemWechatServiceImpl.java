@@ -40,7 +40,6 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
         // 计算结束时间
         calculateEndTime(systemOrders);
 
-
         return systemWechatMapper.createOrder(systemOrders);
     };
 
@@ -49,31 +48,27 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
     };
 
 
-    // 计算结束时间
     private void calculateEndTime(SystemOrders systemOrders) {
         if (systemOrders.getStartTime() == null || systemOrders.getOrderPackage() == null) {
             throw new IllegalArgumentException("Start time or order package cannot be null.");
         }
 
-        // 解析 orderPackage 字段
-        String orderPackage = systemOrders.getOrderPackage(); // 格式: "2小时" 或 "1天"
-        int duration = Integer.parseInt(orderPackage.replaceAll("\\D+", ""));  // 提取数字部分
-        String unit = orderPackage.replaceAll("\\d+", "").trim();  // 提取单位部分 (小时/天)
+        // 解析 orderPackage 字段，直接当作小时数来处理
+        String orderPackage = systemOrders.getOrderPackage().trim();  // 去除前后空格
+        int duration = Integer.parseInt(orderPackage);  // 直接解析为数字，表示小时数
+
+        // 输出日志帮助调试，确认时长是否正确
+        System.out.println("Order Package (Hours): " + duration);
 
         // 获取开始时间
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(systemOrders.getStartTime());
 
-        // 根据单位来决定加上小时数或天数
-        if ("小时".equals(unit)) {
-            calendar.add(Calendar.HOUR, duration);  // 加上小时
-        } else if ("天".equals(unit)) {
-            calendar.add(Calendar.DAY_OF_MONTH, duration);  // 加上天数
-        } else {
-            throw new IllegalArgumentException("Invalid order package unit: " + unit);
-        }
+        // 加上小时数
+        calendar.add(Calendar.HOUR, duration);
 
         // 设置结束时间
         systemOrders.setEndTime(new Timestamp(calendar.getTimeInMillis()));
     }
+
 }

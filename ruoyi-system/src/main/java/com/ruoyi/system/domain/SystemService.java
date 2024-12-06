@@ -44,6 +44,27 @@ public class SystemService implements Serializable
 
     private BigDecimal hourRate;
 
+    private String hours;
+
+    private String hourlyRate;
+
+
+    public String getHours() {
+        return hours;
+    }
+
+    public void setHours(String hours) {
+        this.hours = hours;
+    }
+
+    public String getHourlyRate() {
+        return hourlyRate;
+    }
+
+    public void setHourlyRate(String hourlyRate) {
+        this.hourlyRate = hourlyRate;
+    }
+
     public BigDecimal getHourRate() {
         return hourRate;
     }

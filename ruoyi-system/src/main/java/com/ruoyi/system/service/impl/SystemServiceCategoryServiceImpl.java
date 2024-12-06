@@ -49,8 +49,8 @@ public class SystemServiceCategoryServiceImpl implements ISystemServiceCategoryS
     };
 
 
-    public SystemService selectServiceCategoryDetail(Long id){
-        return systemServiceCategoryMapper.selectServiceCategoryDetail(id);
+    public SystemService selectServiceCategoryDetail(SystemService systemService){
+        return systemServiceCategoryMapper.selectServiceCategoryDetail(systemService);
     };
 
     /**

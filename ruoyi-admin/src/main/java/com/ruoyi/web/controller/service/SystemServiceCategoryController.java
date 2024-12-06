@@ -54,9 +54,9 @@ public class SystemServiceCategoryController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:category:list')")
     @GetMapping("/detail")
-    public SystemService getServiceCategoryDetail(@RequestParam Long id)
+    public SystemService getServiceCategoryDetail(SystemService systemService)
     {
-        return systemServiceCategoryService.selectServiceCategoryDetail(id);
+        return systemServiceCategoryService.selectServiceCategoryDetail(systemService);
     }
 
     /**

@@ -51,21 +51,14 @@ public class SystemServicePersonnelServiceImpl implements ISystemServicePersonne
      * @param
      * @return 结果
      */
-//    @Override
-//    public int insertSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel)
-//    {
-//        systemServicePersonnel.setCreateTime(DateUtils.getNowDate());
-//        return systemServicePersonnelMapper.insertSystemServicePersonnel(systemServicePersonnel);
-//    }
+
     @Transactional
     public int insertSystemServicePersonnel(SystemServicePersonnel personnel) {
         // 1. 插入服务人员基本信息
         int rows = systemServicePersonnelMapper.insertSystemServicePersonnel(personnel);
 
         // 2. 如果有工作时间，插入排班信息
-//        if (personnel.getWorkTime1() != null || personnel.getWorkTime2() != null) {
             systemServicePersonnelMapper.insertPersonnelSchedule(personnel);
-//        }
 
         return rows;
     }
@@ -73,23 +66,10 @@ public class SystemServicePersonnelServiceImpl implements ISystemServicePersonne
     /**
      * 修改服务人员管理
      *
-     * @param systemServicePersonnel 服务人员管理
+     * @param
      * @return 结果
      */
-//    @Override
-//    public int updateSystemServicePersonnel(SystemServicePersonnel systemServicePersonnel)
-//    {
-//        systemServicePersonnel.setUpdateTime(DateUtils.getNowDate());
-//        return systemServicePersonnelMapper.updateSystemServicePersonnel(systemServicePersonnel);
-//    }
-//    @Transactional
-//    public int updateSystemServicePersonnel(SystemServicePersonnel personnel) {
-//        int rows = systemServicePersonnelMapper.updateSystemServicePersonnel(personnel);
-//        if (rows > 0) {
-//            systemServicePersonnelMapper.updatePersonnelSchedule(personnel);
-//        }
-//        return rows;
-//    }
+
     @Transactional
     public int updateSystemServicePersonnel(SystemServicePersonnel personnel) {
         int rows = systemServicePersonnelMapper.updateSystemServicePersonnel(personnel);

@@ -3,6 +3,7 @@ package com.ruoyi.system.mapper;
 import com.ruoyi.housekeeping.domain.SystemOrder;
 import com.ruoyi.housekeeping.domain.SystemServicePersonnel;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -32,6 +33,8 @@ public interface SystemReceivingOrdersMapper
      */
     public List<SystemOrder> selectSystemReceivingOrdersList(SystemOrder systemOrder);
 
+
+    public List<SystemOrder> selectOrdersToUpdate(Timestamp currentTime);
     /**
      * 新增订单管理
      *

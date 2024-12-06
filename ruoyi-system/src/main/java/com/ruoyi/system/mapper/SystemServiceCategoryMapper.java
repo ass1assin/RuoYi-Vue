@@ -30,7 +30,7 @@ public interface SystemServiceCategoryMapper
 
     public List<SystemServiceCategory> selectSystemServiceCategoryyuanList(SystemServiceCategory systemServiceCategory);
 
-    public SystemService selectServiceCategoryDetail(Long id);
+    public SystemService selectServiceCategoryDetail(SystemService systemService);
 
     /**
      * 新增服务种类
