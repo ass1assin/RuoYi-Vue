@@ -40,7 +40,7 @@ public class SystemServiceCategoryController extends BaseController
         return systemServiceCategoryService.selectSystemServiceCategoryList(cityName);
     }
 
-    @PreAuthorize("@ss.hasPermi('system:category:list')")
+//    @PreAuthorize("@ss.hasPermi('system:category:list')")
     @GetMapping("/yuanlist")
     public TableDataInfo  getServiceCategoryyuan(SystemServiceCategory systemServiceCategory)
     {
@@ -62,7 +62,7 @@ public class SystemServiceCategoryController extends BaseController
     /**
      * 获取服务种类详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:category:query')")
+//    @PreAuthorize("@ss.hasPermi('system:category:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

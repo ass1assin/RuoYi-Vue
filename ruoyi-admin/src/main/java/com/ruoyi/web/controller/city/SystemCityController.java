@@ -62,7 +62,7 @@ public class SystemCityController extends BaseController
     /**
      * 获取城市详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:city:query')")
+//    @PreAuthorize("@ss.hasPermi('system:city:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

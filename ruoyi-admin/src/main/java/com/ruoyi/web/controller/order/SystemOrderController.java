@@ -37,7 +37,7 @@ public class SystemOrderController extends BaseController
     /**
      * 查询订单管理列表
      */
-    @PreAuthorize("@ss.hasPermi('housekeeping:order:list')")
+//    @PreAuthorize("@ss.hasPermi('housekeeping:order:list')")
     @GetMapping("/list")
     public TableDataInfo list(SystemOrder systemOrder)
     {

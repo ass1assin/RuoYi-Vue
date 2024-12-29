@@ -100,12 +100,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handlePreview(scope.row)"
+            v-hasPermi="['housekeeping:order:query']"
           >查看详情</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['housekeeping:order:remove']"
           >删除</el-button>
         </template>
       </el-table-column>

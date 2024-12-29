@@ -14,6 +14,25 @@ public class SystemComment implements Serializable {
     private String imageUrls;         // 评论图片
     private Long parentId;           // 父评论ID
     private Date createTime;          // 创建时间
+    private String nickName;          // 用户昵称
+    private String avatar;            // 用户头像
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
 
     // Getter 和 Setter 方法
 

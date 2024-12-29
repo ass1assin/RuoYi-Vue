@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSystemCommentsList" parameterType="SystemComments" resultMap="SystemCommentsResult">
         select
             sc.*,
-            su.user_name,
+            su.nick_name as user_name,
             ss.name as service_name
         from system_comment as sc
         left join sys_user as su on sc.user_id = su.user_id

@@ -33,15 +33,26 @@
     </el-form>
 
 
-    <el-table v-loading="loading" :data="commentsList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="getParentComments" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="评论编号" align="center" prop="id" />
-<!--      <el-table-column label="用户编号" align="center" prop="userId" />-->
-<!--      <el-table-column label="服务ID" align="center" prop="serviceId" />-->
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="服务名" align="center" prop="serviceName" />
       <el-table-column label="评分" align="center" prop="rating" />
-      <el-table-column label="评论内容" align="center" prop="content" />
+      <el-table-column label="评论内容" align="center">
+        <template slot-scope="scope">
+          <div>{{ scope.row.content }}</div>
+          <!-- 子评论展示区域 -->
+          <div v-if="showReplyMap[scope.row.id]" class="reply-list">
+            <div v-for="reply in getReplyComments(scope.row.id)" :key="reply.id" class="reply-item">
+              <div class="reply-content">
+                <span class="reply-user">{{ reply.userName }}：</span>
+                <span>{{ reply.content }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="评论图片" align="center">
         <template slot-scope="scope">
           <div v-if="scope.row.imageUrls">
@@ -56,15 +67,22 @@
         </template>
       </el-table-column>
 
-<!--      <el-table-column label="父评论" align="center" prop="parentId" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
+            v-if="hasReply(scope.row.id)"
+            type="text"
+            @click="toggleReply(scope.row.id)"
+          >
+            {{ showReplyMap[scope.row.id] ? '收起回复' : '查看回复' }}
+          </el-button>
+          <el-button
+            v-if="!hasReply(scope.row.id)"
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-add"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:comments:edit']"
+            v-hasPermi="['system:comments:add']"
           >回复</el-button>
           <el-button
             size="mini"
@@ -88,27 +106,12 @@
     <!-- 添加或修改评论对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户编号" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户��号" />
-        </el-form-item>
-        <el-form-item label="服务ID" prop="serviceId">
-          <el-input v-model="form.serviceId" placeholder="请输入服务ID" />
-        </el-form-item>
-        <el-form-item label="评分" prop="rating">
-          <el-input v-model="form.rating" placeholder="请输入评分" />
-        </el-form-item>
         <el-form-item label="评论内容">
-          <editor v-model="form.content" :min-height="192"/>
-        </el-form-item>
-        <el-form-item label="评论图片" prop="imageUrls">
-          <el-input v-model="form.imageUrls" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="父评论" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入父评论" />
+          <editor v-model="commentContent" :min-height="192"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm(form.id)">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -154,13 +157,22 @@ export default {
       },
       // 表单参数
       form: {},
+      commentContent: "",
+      // parentId: null,
       // 表单校验
       rules: {
-      }
+      },
+      showReplyMap: {}, // 控制回复显示状态
     };
   },
   created() {
     this.getList();
+  },
+  computed: {
+    // 只获取父评论
+    getParentComments() {
+      return this.commentsList.filter(item => !item.parentId);
+    }
   },
   methods: {
     /** 查询评论列表 */
@@ -216,30 +228,22 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getComments(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改评论";
-      });
+      this.form.parentId = row.id
+      this.form.serviceId = row.serviceId
+      this.open = true;
+      this.title = "回复评论";
     },
     /** 提交按钮 */
-    submitForm() {
+    submitForm(id) {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.id != null) {
-            updateComments(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
+            this.form.content =this.commentContent;
+            this.form.userId = 102;
             addComments(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
-          }
         }
       });
     },
@@ -258,7 +262,48 @@ export default {
       this.download('system/comments/export', {
         ...this.queryParams
       }, `comments_${new Date().getTime()}.xlsx`)
-    }
+    },
+    // 检查评论是否有回复
+    hasReply(commentId) {
+      return this.commentsList.some(item => item.parentId === commentId);
+    },
+    // 获取某条评论的所有回复
+    getReplyComments(commentId) {
+      return this.commentsList.filter(item => item.parentId === commentId);
+    },
+    // 切换回复的显示状态
+    toggleReply(commentId) {
+      this.$set(this.showReplyMap, commentId, !this.showReplyMap[commentId]);
+    },
   }
 };
 </script>
+
+<style scoped>
+.operation-buttons {
+  margin: 5px 0;
+}
+.reply-list {
+  margin-top: 10px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+.reply-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ebeef5;
+}
+.reply-item:last-child {
+  border-bottom: none;
+}
+.reply-content {
+  margin-bottom: 5px;
+}
+.reply-user {
+  font-weight: bold;
+  margin-right: 5px;
+}
+.reply-info {
+  font-size: 12px;
+  color: #909399;
+}
+</style>

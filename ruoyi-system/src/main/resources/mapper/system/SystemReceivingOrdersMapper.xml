@@ -66,7 +66,7 @@
         o.service_id,
         s.name as service_name, -- 服务名称
         o.user_id,
-        u.username as user_name, -- 用户名
+        u.user_name, -- 用户名
         o.image_url,
         o.total_price,
         o.status,
@@ -80,7 +80,7 @@
         from system_order o
         LEFT JOIN system_service_personnel p ON o.personnel_id = p.id -- 通过服务人员ID连接服务人员表
         LEFT JOIN system_service s ON o.service_id = s.id -- 通过服务ID连接服务表
-        LEFT JOIN system_user u ON o.user_id = u.id -- 通过用户ID连接用户表
+        LEFT JOIN sys_user u ON o.user_id = u.user_id -- 通过用户ID连接用户表
         <where>
             o.status = 0 OR o.status = 1
             <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>

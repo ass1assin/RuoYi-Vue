@@ -36,7 +36,6 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
         String orderId = String.format("%d%s", System.currentTimeMillis(), (int) (Math.random() * 10000));
         // 设置订单ID
         systemOrders.setOrderId(orderId);
-
         // 计算结束时间
         calculateEndTime(systemOrders);
 
@@ -56,9 +55,6 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
         // 解析 orderPackage 字段，直接当作小时数来处理
         String orderPackage = systemOrders.getOrderPackage().trim();  // 去除前后空格
         int duration = Integer.parseInt(orderPackage);  // 直接解析为数字，表示小时数
-
-        // 输出日志帮助调试，确认时长是否正确
-        System.out.println("Order Package (Hours): " + duration);
 
         // 获取开始时间
         Calendar calendar = Calendar.getInstance();

@@ -119,8 +119,6 @@
           <el-table-column label="服务人员ID" prop="id" />
           <el-table-column label="服务人员姓名" prop="name" />
           <el-table-column label="联系电话" prop="phone" />
-          <el-table-column label="擅长服务类型" prop="serviceType" />
-          <el-table-column label="资格认证" prop="qualification" />
           <el-table-column label="经验" prop="experience" />
           <el-table-column label="工作日" prop="workDay" />
         </el-table>
@@ -323,10 +321,8 @@ export default {
       this.title = "指派服务人员";
       const startTime = new Date(row.startTime);
       const endTime = new Date(row.endTime);
-
       this.query.startTime = startTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
       this.query.endTime = endTime.toLocaleString('sv-SE');  // 使用ISO格式本地时区时间
-
       this.query.location = row.location.split(' ')[0];
       this.form.id = row.id;
       this.getAvailablePersonnels();

@@ -72,8 +72,8 @@ public class SystemCommentsController extends BaseController
     /**
      * 新增评论
      */
-    @PreAuthorize("@ss.hasPermi('system:comments:add')")
-    @Log(title = "评论", businessType = BusinessType.INSERT)
+//    @PreAuthorize("@ss.hasPermi('system:comments:add')")
+//    @Log(title = "评论", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SystemComments systemComments)
     {

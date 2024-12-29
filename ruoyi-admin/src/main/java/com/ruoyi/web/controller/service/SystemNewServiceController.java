@@ -62,7 +62,7 @@ public class SystemNewServiceController extends BaseController
     /**
      * 获取服务详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:service:query')")
+//    @PreAuthorize("@ss.hasPermi('system:service:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

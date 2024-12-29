@@ -62,7 +62,7 @@ public class SystemServicePersonnelController extends BaseController
     /**
      * 获取服务人员管理详细信息
      */
-    @PreAuthorize("@ss.hasPermi('housekeeping:personnel:query')")
+//    @PreAuthorize("@ss.hasPermi('housekeeping:personnel:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

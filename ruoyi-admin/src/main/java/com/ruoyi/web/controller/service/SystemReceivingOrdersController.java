@@ -40,7 +40,6 @@ public class SystemReceivingOrdersController extends BaseController {
     @GetMapping("/availablePersonnel")
     public TableDataInfo getAvailablePersonnel(SystemOrder systemOrder) {
         startPage();
-        System.out.println("systemOrder:" + systemOrder);
         List<SystemServicePersonnel> list =systemReceivingOrdersService.getAvailablePersonnel(systemOrder);
         return getDataTable(list);
     }
@@ -72,7 +71,7 @@ public class SystemReceivingOrdersController extends BaseController {
     /**
      * 新增订单管理
      */
-    @PreAuthorize("@ss.hasPermi('housekeeping:order:add')")
+//    @PreAuthorize("@ss.hasPermi('housekeeping:order:add')")
     @Log(title = "订单管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SystemOrder systemOrder)

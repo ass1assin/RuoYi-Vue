@@ -47,6 +47,8 @@
          <result property="imageUrls" column="image_urls" />   <!-- 评论图片 -->
          <result property="parentId" column="parent_id" />     <!-- 父评论ID -->
          <result property="createTime" column="create_time" />  <!-- 创建时间 -->
+         <result property="avatar" column="avatar" />          <!-- 用户头像 -->
+         <result property="nickName" column="nick_name" />      <!-- 用户昵称 -->
      </resultMap>
 
 
@@ -147,8 +149,11 @@
 
 
     <select id="getComment" parameterType="com.ruoyi.system.domain.SystemComment" resultMap="SystemCommentResult">
-        SELECT *
-        FROM system_comment
+        SELECT sc.*,
+               su.nick_name,
+               su.avatar
+        FROM system_comment sc
+        LEFT JOIN sys_user su ON sc.user_id = su.user_id
         <where>
             <if test="userId != null">user_id = #{userId}</if>
             <if test="serviceId != null">AND service_id = #{serviceId}</if>

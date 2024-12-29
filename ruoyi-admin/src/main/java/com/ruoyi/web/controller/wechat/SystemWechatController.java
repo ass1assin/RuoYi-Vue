@@ -17,6 +17,8 @@ public class SystemWechatController extends BaseController {
 
     @Autowired
     private ISystemWechatService systemWechatService;
+
+
     @PostMapping
     public AjaxResult add(@RequestBody SystemUserAddress systemUserAddress)
     {
