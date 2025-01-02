@@ -23,6 +23,14 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
         return systemWechatMapper.insertSystemUserAddress(systemUserAddress);
     };
 
+    public int updateSystemUserAddress(SystemUserAddress systemUserAddress){
+        return systemWechatMapper.updateSystemUserAddress(systemUserAddress);
+    };
+
+    public int deleteSystemUserAddress(Long id){
+        return systemWechatMapper.deleteSystemUserAddress(id);
+    };
+
     public List<SystemUserAddress> getUserAddress(Long userId){
         return systemWechatMapper.getUserAddress(userId);
     };
@@ -40,6 +48,10 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
         calculateEndTime(systemOrders);
 
         return systemWechatMapper.createOrder(systemOrders);
+    };
+
+    public int cancelOrder(SystemOrders systemOrders){
+        return systemWechatMapper.cancelOrder(systemOrders);
     };
 
     public List<SystemComment> getComment(SystemComment systemComment){

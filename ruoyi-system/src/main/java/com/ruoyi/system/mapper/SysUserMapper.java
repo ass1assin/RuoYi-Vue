@@ -14,6 +14,12 @@ import com.ruoyi.common.core.domain.entity.SysUser;
 public interface SysUserMapper
 {
     public newUser selectUserByOpenId(String openId);
+
+    public boolean createUser(newUser user);
+
+    public newUser selectUserByUserId(Long userId);
+
+    public boolean updateUserInfo(newUser user);
     /**
      * 根据条件分页查询用户列表
      *

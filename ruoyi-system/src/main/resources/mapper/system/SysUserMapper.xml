@@ -49,8 +49,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<resultMap id="NewUserResult" type="newUser">
 		<id     property="userId"       column="user_id"        />
         <result property="openid"     column="open_id"      />
-        <result property="nickname"        column="nick_name"          />
+        <result property="nickName"        column="nick_name"          />
         <result property="avatarUrl"  column="avatar"    />
+		<result property="phonenumber"  column="phonenumber"  />
+		<result property="email"   column="email"  />
 	</resultMap>
 
 	<sql id="selectUserVo">
@@ -65,6 +67,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectUserByOpenId" parameterType="String" resultMap="NewUserResult">
 		select * from sys_user where open_id = #{openId}
 	</select>
+
+	<insert id="createUser" parameterType="newUser" useGeneratedKeys="true" keyProperty="userId">
+		insert into sys_user(
+		<if test="userId != null and userId != 0">user_id,</if>
+        <if test="openid != null and openid != ''">open_id,</if>
+	    <if test="userName != null and userName != ''">user_name,</if>
+        <if test="nickName != null and nickName != ''">nick_name,</if>
+        <if test="avatarUrl != null and avatarUrl != ''">avatar,</if>
+		create_time
+		)values(
+		<if test="userId != null and userId != ''">#{userId},</if>
+        <if test="openid != null and openid != ''">#{openid},</if>
+		<if test="userName != null and userName != ''">#{userName},</if>
+        <if test="nickName != null and nickName != ''">#{nickName},</if>
+        <if test="avatarUrl != null and avatarUrl != ''">#{avatarUrl},</if>
+		sysdate()
+		)
+	</insert>
+
+    <select id="selectUserByUserId" parameterType="Long" resultMap="NewUserResult">
+        select * from sys_user where user_id = #{userId}
+    </select>
+
+    <update id="updateUserInfo" parameterType="newUser">
+        update sys_user
+        <set>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="phonenumber != null and phonenumber != ''">phonenumber = #{phonenumber},</if>
+<!--            <if test="avatarUrl != null and avatarUrl != ''">avatar = #{avatarUrl},</if>-->
+        </set>
+        where user_id = #{userId}
+    </update>
 
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
 		select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader from sys_user u

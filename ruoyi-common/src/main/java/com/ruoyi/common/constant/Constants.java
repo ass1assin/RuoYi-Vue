@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims;
 
 /**
  * 通用常量信息
- * 
+ *
  * @author ruoyi
  */
 public class Constants
@@ -170,4 +170,5 @@ public class Constants
      */
     public static final String[] JOB_ERROR_STR = { "java.net.URL", "javax.naming.InitialContext", "org.yaml.snakeyaml",
             "org.springframework", "org.apache", "com.ruoyi.common.utils.file", "com.ruoyi.common.config", "com.ruoyi.generator" };
+    public static final String DEFAULT_AVATAR = "https://www.helloimg.com/i/2024/11/26/6745a530980f6.png";
 }

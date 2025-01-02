@@ -1,6 +1,8 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.system.domain.CityDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SystemCityMapper;
@@ -9,31 +11,31 @@ import com.ruoyi.system.service.ISystemCityService;
 
 /**
  * 城市Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2024-11-18
  */
 @Service
-public class SystemCityServiceImpl implements ISystemCityService 
+public class SystemCityServiceImpl implements ISystemCityService
 {
     @Autowired
     private SystemCityMapper systemCityMapper;
 
     /**
      * 查询城市
-     * 
+     *
      * @param id 城市主键
      * @return 城市
      */
     @Override
-    public SystemCity selectSystemCityById(Long id)
+    public CityDTO selectSystemCityById(Long id)
     {
         return systemCityMapper.selectSystemCityById(id);
     }
 
     /**
      * 查询城市列表
-     * 
+     *
      * @param systemCity 城市
      * @return 城市
      */
@@ -45,7 +47,7 @@ public class SystemCityServiceImpl implements ISystemCityService
 
     /**
      * 新增城市
-     * 
+     *
      * @param systemCity 城市
      * @return 结果
      */
@@ -57,7 +59,7 @@ public class SystemCityServiceImpl implements ISystemCityService
 
     /**
      * 修改城市
-     * 
+     *
      * @param systemCity 城市
      * @return 结果
      */
@@ -69,7 +71,7 @@ public class SystemCityServiceImpl implements ISystemCityService
 
     /**
      * 批量删除城市
-     * 
+     *
      * @param ids 需要删除的城市主键
      * @return 结果
      */
@@ -81,7 +83,7 @@ public class SystemCityServiceImpl implements ISystemCityService
 
     /**
      * 删除城市信息
-     * 
+     *
      * @param id 城市主键
      * @return 结果
      */

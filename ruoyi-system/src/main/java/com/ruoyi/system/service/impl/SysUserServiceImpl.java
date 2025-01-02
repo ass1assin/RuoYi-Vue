@@ -73,6 +73,20 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.selectUserByOpenId(openId);
     }
 
+    public void createUser(newUser user)
+    {
+        userMapper.createUser(user);
+    }
+
+
+    public newUser selectUserByUserId(Long userId){
+        return userMapper.selectUserByUserId(userId);
+    };
+
+    public boolean updateUserInfo(newUser user){
+        return userMapper.updateUserInfo(user);
+    };
+
     /**
      * 根据条件分页查询用户列表
      *

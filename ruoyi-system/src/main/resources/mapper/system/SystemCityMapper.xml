@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SystemCityMapper">
-    
+
     <resultMap type="SystemCity" id="SystemCityResult">
         <result property="id"    column="id"    />
         <result property="cityName"    column="city_name"    />
@@ -11,22 +11,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="baseServiceFee"    column="base_service_fee"    />
     </resultMap>
 
+    <resultMap id="CityWithServicesResultMap" type="CityDTO">
+        <id property="id" column="city_id"/>
+        <result property="cityName" column="city_name"/>
+        <result property="status" column="city_status"/>
+        <result property="baseServiceFee" column="base_service_fee"/>
+        <collection property="services" ofType="ServiceDTO">
+            <id property="id" column="service_id"/>
+            <result property="name" column="service_name"/>
+            <result property="isSelected" column="is_selected"/>
+        </collection>
+    </resultMap>
+
+
     <sql id="selectSystemCityVo">
         select id, city_name, status, base_service_fee from system_city
     </sql>
 
     <select id="selectSystemCityList" parameterType="SystemCity" resultMap="SystemCityResult">
         <include refid="selectSystemCityVo"/>
-        <where>  
+        <where>
             <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="baseServiceFee != null "> and base_service_fee = #{baseServiceFee}</if>
         </where>
     </select>
-    
-    <select id="selectSystemCityById" parameterType="Long" resultMap="SystemCityResult">
-        <include refid="selectSystemCityVo"/>
-        where id = #{id}
+
+    <select id="selectSystemCityById" parameterType="Long" resultMap="CityWithServicesResultMap">
+        SELECT
+            c.id AS city_id,
+            c.city_name,
+            c.status AS city_status,
+            c.base_service_fee,
+            s.id AS service_id,
+            s.name AS service_name,
+            CASE
+                WHEN scs.service_id IS NOT NULL THEN 1
+                ELSE 0
+                END AS is_selected
+        FROM system_service s
+                 LEFT JOIN system_city_service scs ON s.id = scs.service_id AND scs.city_id = #{cityId}
+                 LEFT JOIN system_city c ON c.id = #{cityId}
     </select>
 
     <insert id="insertSystemCity" parameterType="SystemCity" useGeneratedKeys="true" keyProperty="id">
@@ -58,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSystemCityByIds" parameterType="String">
-        delete from system_city where id in 
+        delete from system_city where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

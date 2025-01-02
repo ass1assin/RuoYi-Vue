@@ -82,7 +82,7 @@ public class SystemReceivingOrdersController extends BaseController {
     /**
      * 修改订单管理
      */
-    @PreAuthorize("@ss.hasPermi('housekeeping:order:edit')")
+//    @PreAuthorize("@ss.hasPermi('housekeeping:order:edit')")
     @Log(title = "订单管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SystemOrder systemOrder)

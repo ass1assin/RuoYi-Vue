@@ -9,6 +9,7 @@ import com.ruoyi.framework.web.service.MobileLoginService;
 import com.ruoyi.framework.web.service.SysLoginService;
 import com.ruoyi.framework.web.service.TokenService;
 import com.ruoyi.system.domain.LoginParams;
+import com.ruoyi.system.domain.SystemUserAddress;
 import com.ruoyi.system.domain.newUser;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 登录控制器
@@ -49,17 +52,35 @@ public class LoginController{
         // 查询或创建用户
         newUser user = userService.selectUserByOpenId(openid);
 
-//        System.out.println("user: " + user);
-//        if (user == null) {
-//            // 如果用户不存在，创建新用户
-//            user = new newUser();
-//            user.setOpenid(openid);
-//
-//            userService.createUser(user); // 保存新用户到数据库
-//        }
-
+        System.out.println("user: " + user);
+        if (user == null) {
+            // 如果用户不存在，创建新用户
+            user = new newUser();
+            user.setOpenid(openid);
+            Random random = new Random();
+            String randomNum = String.valueOf(random.nextInt(1000000));
+            // 确保随机数为八位数
+            while (randomNum.length() < 6) {
+                randomNum = "0" + randomNum; // 在前面添加0
+            }
+            user.setNickName("用户" + randomNum+ openid.substring(0, 6));
+            user.setUserName("user" + randomNum+ openid.substring(0, 6));
+            user.setAvatarUrl(Constants.DEFAULT_AVATAR);
+            userService.createUser(user); // 保存新用户到数据库
+        }
         // 返回用户ID
         return AjaxResult.success(user);
+    }
+
+    @GetMapping("/getUserInfo")
+    public newUser getUserInfo(@RequestParam Long userId) {
+        return userService.selectUserByUserId(userId);
+    }
+
+    @PutMapping("/updateUserInfo")
+    public boolean updateUserInfo(@RequestBody newUser user) {
+        System.out.println("user: " + user);
+        return userService.updateUserInfo(user);
     }
 
     /**

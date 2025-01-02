@@ -80,6 +80,24 @@
         </trim>
     </insert>
 
+    <update id="updateSystemUserAddress" parameterType="SystemUserAddress">
+        update system_user_addresses
+        <set>
+            <if test="address != null">address = #{address},</if>
+            <if test="detailedAddress != null">detailed_address = #{detailedAddress},</if>
+            <if test="consigneeName != null">consignee_name = #{consigneeName},</if>
+            <if test="phoneNumber != null">phonenumber = #{phoneNumber},</if>
+        </set>
+        <where>
+            <if test="id != null">id = #{id}</if>
+        </where>
+    </update>
+
+    <delete id="deleteSystemUserAddress" parameterType="Long">
+        delete from system_user_addresses
+        where id = #{id}
+    </delete>
+
     <select id="getUserAddress" parameterType="Long" resultMap="UserAddressResult">
         select * from system_user_addresses
         <where>
@@ -147,6 +165,15 @@
         </trim>
     </insert>
 
+    <update id="cancelOrder" parameterType="com.ruoyi.system.domain.SystemOrders">
+        UPDATE system_order
+        <set>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        <where>
+            <if test="id != null">id = #{id}</if>
+        </where>
+    </update>
 
     <select id="getComment" parameterType="com.ruoyi.system.domain.SystemComment" resultMap="SystemCommentResult">
         SELECT sc.*,

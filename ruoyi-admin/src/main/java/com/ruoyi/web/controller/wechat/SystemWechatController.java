@@ -20,9 +20,21 @@ public class SystemWechatController extends BaseController {
 
 
     @PostMapping
-    public AjaxResult add(@RequestBody SystemUserAddress systemUserAddress)
+    public AjaxResult addAddress(@RequestBody SystemUserAddress systemUserAddress)
     {
         return toAjax(systemWechatService.insertSystemUserAddress(systemUserAddress));
+    }
+
+    @PutMapping("/updateAddress")
+    public AjaxResult updateAddress(@RequestBody SystemUserAddress systemUserAddress)
+    {
+        return toAjax(systemWechatService.updateSystemUserAddress(systemUserAddress));
+    }
+
+    @DeleteMapping("/{id}")
+    public AjaxResult deleteAddress(@PathVariable Long id)
+    {
+        return toAjax(systemWechatService.deleteSystemUserAddress(id));
     }
 
     @GetMapping("/address")
@@ -40,8 +52,13 @@ public class SystemWechatController extends BaseController {
     @PostMapping("/createOrder")
     public AjaxResult createOrder(@RequestBody SystemOrders systemOrders)
     {
-
         return toAjax(systemWechatService.createOrder(systemOrders));
+    }
+
+    @PutMapping("/cancelOrder")
+    public AjaxResult cancelOrder(@RequestBody SystemOrders systemOrders)
+    {
+        return toAjax(systemWechatService.cancelOrder(systemOrders));
     }
 
     @GetMapping("/comment")

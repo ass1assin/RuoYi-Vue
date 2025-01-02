@@ -13,7 +13,11 @@ public interface ISysUserService
 {
     public newUser selectUserByOpenId(String openId);
 
-//    public void createUser(newUser user);
+    public void createUser(newUser user);
+
+    public newUser selectUserByUserId(Long userId);
+
+    public boolean updateUserInfo(newUser user);
     /**
      * 根据条件分页查询用户列表
      *

@@ -10,11 +10,17 @@ import java.util.List;
 public interface ISystemWechatService {
     public int insertSystemUserAddress(SystemUserAddress systemUserAddress);
 
+    public int updateSystemUserAddress(SystemUserAddress systemUserAddress);
+
+    public int deleteSystemUserAddress(Long id);
+
     public List<SystemUserAddress> getUserAddress(Long userId);
 
     public List<SystemOrders> getOrder(SystemOrders systemOrders);
 
     public int createOrder(SystemOrders systemOrders);
+
+    public int cancelOrder(SystemOrders systemOrders);
 
     public List<SystemComment> getComment(SystemComment systemComment);
 }
