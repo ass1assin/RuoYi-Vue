@@ -134,6 +134,7 @@
 import { getOrder,listOrder } from '@/api/housekeeping/order'
 import {listPersonnel} from '@/api/housekeeping/personnel'
 import {listComments} from "@/api/system/comments";
+import * as echarts from 'echarts'
 
 export default {
   name: 'Home',
@@ -157,12 +158,16 @@ export default {
       dailyIncome: [], // 存储日收入数据
       parkingTrends: [], // 存储30分钟内的停车趋势数据
       longTimeRecords: [], // 存储长时间停车记录
+      orderChart: null,
+      orderList: []
     }
   },
   mounted() {
     this.loadScripts()
     this.initData()
     this.startAutoRefresh()
+    this.initOrderChart()
+    this.getOrderData()
   },
   beforeDestroy() {
     // 清除所有定时器
@@ -172,6 +177,8 @@ export default {
     if (this.statusTimer) {
       clearInterval(this.statusTimer)
     }
+    window.removeEventListener('resize', this.handleResize)
+    this.orderChart && this.orderChart.dispose()
   },
   methods: {
     loadScripts() {
@@ -819,7 +826,101 @@ export default {
         default:
           return 'status-normal'
       }
+    },
+
+    // 初始化图表
+    initOrderChart() {
+      this.orderChart = echarts.init(document.getElementById('echart4'))
+    },
+
+    // 获取订单数据
+    async getOrderData() {
+      try {
+        const res = await listOrder()
+        if (res.code === 200) {
+          this.orderList = res.rows
+          this.updateOrderChart()
+        }
+      } catch (error) {
+        console.error('获取订单数据失败:', error)
+      }
+    },
+
+    // 更新图表
+    updateOrderChart() {
+      // 统计各区域的订单数量
+      const areaStats = {}
+      this.orderList.forEach(order => {
+        // 从地址中提取区域名称（假设格式为"广州 xx区域 具体地址"）
+        const area = order.location.split(' ')[1] || '其他'
+        areaStats[area] = (areaStats[area] || 0) + 1
+      })
+
+      const option = {
+        title: {
+          text: '各区域订单分布',
+          textStyle: {
+            color: '#333',
+            fontSize: 14
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: Object.keys(areaStats),
+          axisLabel: {
+            interval: 0,
+            rotate: 30
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: '订单数量'
+        },
+        series: [{
+          name: '订单数量',
+          type: 'bar',
+          data: Object.values(areaStats),
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#83bff6' },
+              { offset: 0.5, color: '#188df0' },
+              { offset: 1, color: '#188df0' }
+            ])
+          },
+          emphasis: {
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#2378f7' },
+                { offset: 0.7, color: '#2378f7' },
+                { offset: 1, color: '#83bff6' }
+              ])
+            }
+          }
+        }]
+      }
+
+      this.orderChart && this.orderChart.setOption(option)
+    },
+
+    // 窗口大小改变时重置图表大小
+    handleResize() {
+      this.orderChart && this.orderChart.resize()
     }
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize)
   }
 }
 </script>
