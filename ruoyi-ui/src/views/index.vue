@@ -33,7 +33,7 @@
           </div>
           <!-- 收入趋势 - 放大并居中 -->
           <div class="boxall trend-chart" style="height:450px">  <!-- 增加高度 -->
-            <div class="alltitle">30分钟内区域停车情况</div>
+            <div class="alltitle">各区域订单分布</div>
             <div class="navboxall" id="echart4"></div>
           </div>
         </li>
@@ -78,7 +78,7 @@
                   <ul>
                     <li v-for="debt in debtVehicles" :key="debt.id">
                       <span>{{ debt.name }}</span>
-                      <span class="debt-status">{{ debt.serviceType }}</span>
+                      <span >{{ debt.serviceType }}</span>
                       <span>{{ debt.experience }}</span>
                     </li>
                   </ul>
@@ -144,20 +144,9 @@ export default {
       todayIncome: 0,
       yearIncome: 0,
       monthIncome: 0,
-      dailyIncomes: [],   // 本月每天的收入数据
-      parkingRecords: [],
-      regionRanking: [], // 区域排名数据
-      adminStatus: [],
-      debtVehicles: [],
-      regions: [],
-      selectedRegion: '', // 当前选中的区域
-      parkingSpots: [], // 当前区域的所有车位
-      statusTimer: null, // 用于存储状态更新定时器
-      parkingLots: [], // 存储区域泊位统计数据
-      currentMonth: '', // 当前月份
-      dailyIncome: [], // 存储日收入数据
-      parkingTrends: [], // 存储30分钟内的停车趋势数据
-      longTimeRecords: [], // 存储长时间停车记录
+      parkingRecords: [], // 订单记录
+      adminStatus: [], // 评论数据
+      debtVehicles: [], // 服务人员数据
       orderChart: null,
       orderList: []
     }
@@ -247,17 +236,11 @@ export default {
     // 初始化所有数据
     async initData() {
       try {
-        this.formatMonth()
         await Promise.all([
           this.loadAdminStatus(),
           this.loadIncomeData(),
-          this.loadParkingStatus(),
           this.loadRecentRecords(),
           this.loadDebtVehicles(),
-          this.loadRegionRanking(),
-          this.loadParkingLots(),
-          this.loadParkingTrends(),
-          this.loadLongTimeRecords(),
         ])
       } catch (error) {
         console.error('加载数据失败:', error)
@@ -860,7 +843,7 @@ export default {
         title: {
           text: '各区域订单分布',
           textStyle: {
-            color: '#333',
+            color: '#676f7d',
             fontSize: 14
           }
         },
@@ -881,12 +864,16 @@ export default {
           data: Object.keys(areaStats),
           axisLabel: {
             interval: 0,
-            rotate: 30
+            rotate: 30,
+            color: '#fff'
           }
         },
         yAxis: {
           type: 'value',
-          name: '订单数量'
+          name: '订单数量',
+          axisLabel: {
+            color: '#fff'
+          }
         },
         series: [{
           name: '订单数量',
@@ -898,15 +885,6 @@ export default {
               { offset: 0.5, color: '#188df0' },
               { offset: 1, color: '#188df0' }
             ])
-          },
-          emphasis: {
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#2378f7' },
-                { offset: 0.7, color: '#2378f7' },
-                { offset: 1, color: '#83bff6' }
-              ])
-            }
           }
         }]
       }
@@ -970,7 +948,7 @@ export default {
   min-height: 100%;
   padding: 20px;
   box-sizing: border-box;
-
+  background: linear-gradient(to bottom, #1a1a1a, #2d3a4b);
 }
 
 /* 调整主容器样式 */
@@ -994,9 +972,16 @@ export default {
 .boxall {
   position: relative;
   margin-bottom: 20px;
-  background: rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  transition: transform 0.3s ease;
+}
+
+.boxall:hover {
+  transform: translateY(-5px);
 }
 
 /* 确保图表内容完整显示 */
@@ -1212,12 +1197,14 @@ export default {
   grid-template-columns: 2fr 1fr 3fr 2fr;
   padding: 10px;
   background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 8px 8px 0 0;
   font-weight: bold;
 }
 
 .record-header span {
   text-align: center;
-  color: #fff;
+  //color: #fff;
 }
 
 .record-body {
@@ -1237,6 +1224,11 @@ export default {
   grid-template-columns: 2fr 1fr 3fr 2fr;
   padding: 8px 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.3s ease;
+}
+
+.record-body li:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .record-body li span {
@@ -1321,40 +1313,40 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  height: 100%;
+  padding: 30px;
 }
 
 .income-item {
   flex: 1;
   text-align: center;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
   margin: 0 10px;
   transition: all 0.3s ease;
 }
 
 .income-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
 }
 
 .income-title {
-  color: #fff;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
   margin-bottom: 8px;
-  opacity: 0.8;
 }
 
 .income-title span {
+  color: rgba(255, 255, 255, 0.6);
   font-size: 12px;
   margin-left: 4px;
-  opacity: 0.6;
 }
 
 .income-value {
-  color: #409EFF;
+  background: linear-gradient(45deg, #409EFF, #36D1DC);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-size: 24px;
   font-weight: bold;
   text-shadow: 0 0 10px rgba(64, 158, 255, 0.3);
@@ -1440,6 +1432,8 @@ export default {
   grid-template-columns: 2fr 1.5fr 1.5fr 2fr;
   padding: 10px;
   background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 8px 8px 0 0;
   font-weight: bold;
   position: sticky;
   top: 0;
@@ -1532,21 +1526,21 @@ export default {
 
 /* 确保内容在容器内完整显示 */
 .navboxall {
-  height: calc(100% - 30px);
+  height: calc(100% - 50px);
   overflow: hidden;
 }
 
 /* 修改表头文字颜色 */
 .debt-header span,
 .long-time-header span {
-  color: #fff !important;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: bold;
 }
 
 /* 修改内容文字颜色，保持特殊状态颜色不变 */
 .debt-body li span,
 .long-time-body li span {
-  color: #fff !important; /* 默认文字颜色为白色 */
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* 保持特殊状态的颜色不变 */
@@ -1612,34 +1606,276 @@ export default {
   border-radius: 5px 5px 0 0;
 }
 
+/* 优化基础容器样式 */
+.screen-container {
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background: linear-gradient(to bottom, #1a1a1a, #2d3a4b);
+}
+
+.mainbox {
+  width: 100%;
+  min-height: calc(100vh - 120px);
+}
+
+/* 优化头部样式 */
+.head {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.head h1 {
+  color: #fff;
+  font-size: 28px;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+  margin: 0;
+}
+
+/* 优化卡片样式 */
+.boxall {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.boxall:hover {
+  transform: translateY(-5px);
+}
+
+.alltitle {
+  color: #fff;
+  font-size: 16px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px 10px 0 0;
+}
+
+/* 优化收入展示框样式 */
+.income-box {
+  padding: 20px;
+}
+
+.income-item {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.income-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+}
+
+.income-value {
+  background: linear-gradient(45deg, #409EFF, #36D1DC);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* 优化表格样式 */
+.record-header, .debt-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 8px 8px 0 0;
+}
+
+.record-body li, .debt-body li {
+  transition: background 0.3s ease;
+}
+
+.record-body li:hover, .debt-body li:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* 优化滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 调整文字颜色 */
+.income-title {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.income-title span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.record-header span,
+.debt-header span {
+  font-weight: bold;
+  text-align: center;
+}
+
+.record-body li span,
+.debt-body li span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.admin-info {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 特殊状态的文字颜色 */
+.debt-amount {
+  color: #ff6b6b !important;
+}
+
+.debt-status {
+  color: #ffd93d !important;
+}
+
+.duration-warning {
+  color: #ffd93d !important;
+}
+
+.status-normal {
+  color: #6ce675 !important;
+}
+
+.status-warning {
+  color: #ffd93d !important;
+}
+
+.status-danger {
+  color: #ff6b6b !important;
+}
+
+/* 表格hover效果 */
+.record-body li:hover span,
+.debt-body li:hover span {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* 确保图表文字可见 */
+.trend-chart .alltitle {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 调整加载文字颜色 */
+.loadbox {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 调整服务人员表格文字颜色 */
+.debt-header {
+  color: #676f7d;
+}
+
+.debt-header span {
+  color: #676f7d;
+}
+
+.debt-body li {
+  color: #676f7d;
+}
+
+.debt-body li span {
+  color: #676f7d;
+}
+
+/* 服务人员表格特定字段颜色 */
+.debt-body li span.name {
+  color: #676f7d;
+}
+
+.debt-body li span.serviceType {
+  color: #ffd93d;  /* 擅长服务使用醒目的黄色 */
+}
+
+.debt-body li span.experience {
+  color: #67C23A;  /* 经验使用绿色 */
+}
+
+/* 表格标题文字颜色 */
+.alltitle {
+  color: #676f7d;
+  font-weight: bold;
+}
+
+/* 确保所有表头文字清晰可见 */
+.record-header,
+.debt-header,
+.long-time-header {
+  color: #676f7d;
+  font-weight: bold;
+}
+
+/* 表格内容文字颜色 */
+.record-body li span,
+.debt-body li span,
+.long-time-body li span {
+  color: #676f7d;
+}
+
+/* Hover 效果 */
+.record-body li:hover span,
+.debt-body li:hover span,
+.long-time-body li:hover span {
+  color: #ffffff;
+}
+
+/* 评论文字颜色 */
+.admin-item {
+  color: #676f7d;
+}
+
+.admin-name {
+  color: #676f7d;
+}
+
+.admin-info {
+  color: #d1d1d1;
+}
+
+/* 收入数据文字颜色 */
+.income-title {
+  color: #676f7d;
+}
+
+.income-title span {
+  color: #d1d1d1;
+}
+
+
+
+/* 加载提示文字颜色 */
+.loadbox {
+  color: #e1e1e1;
+}
+
 </style>
-
-<!--<template>-->
-<!--  <div class="app-container home">-->
-<!--     ssss-->
-<!--  </div>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--export default {-->
-<!--  name: "Index",-->
-<!--  data() {-->
-<!--    return {-->
-<!--      // 版本号-->
-<!--      version: "3.8.8"-->
-<!--    };-->
-<!--  },-->
-<!--  methods: {-->
-<!--    goTarget(href) {-->
-<!--      window.open(href, "_blank");-->
-<!--    }-->
-<!--  }-->
-<!--};-->
-<!--</script>-->
-
-<!--<style scoped lang="scss">-->
-<!--.home {-->
-
-<!--}-->
-<!--</style>-->
-
