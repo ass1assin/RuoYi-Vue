@@ -5,61 +5,10 @@
     </div>
     <div class="back"></div>
     <div class="head">
-      <div class="weather"><span id="showTime"></span></div>
-      <h1>城市路段车位运营情况</h1>
+      <h1>爱康家政运营情况</h1>
     </div>
     <div class="mainbox">
       <ul class="clearfix">
-        <li class="left-column">  <!-- 左侧列 -->
-          <!-- 管理员在岗情况 -->
-          <div class="boxall" style="height:260px;">
-            <div class="alltitle">城市信息员上岗情况</div>
-            <div class="navboxall">
-              <div class="admin-status">
-                <div v-for="admin in adminStatus" :key="admin.userId" class="admin-item">
-                  <img :src="admin.avatar" class="admin-avatar" />
-                  <div class="admin-info">
-                    <div class="admin-name">{{ admin.userName }}</div>
-                    <div class="admin-name">{{ admin.content }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- 区域泊位统计 -->
-          <div class="boxall" style="height:300px;">
-            <div class="alltitle">区域泊位统计</div>
-            <div class="navboxall" id="echart5"></div>
-          </div>
-          <!-- 区域排行 -->
-          <div class="boxall" style="height:300px">
-            <div class="alltitle">
-              月度区域排行
-              <span class="month-tag">{{ currentMonth }}</span>
-            </div>
-            <div class="navboxall">
-              <table class="table1" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tbody>
-                <tr>
-                  <th scope="col">排名</th>
-                  <th scope="col">区域</th>
-                  <th scope="col">月收入(元)</th>
-                  <th scope="col">月停车次数</th>
-                </tr>
-                <tr v-for="(region, index) in regionRanking" :key="region.regionName">
-                  <td>
-                    <span :class="{'top-rank': index < 3}">{{ index + 1 }}</span>
-                  </td>
-                  <td>{{ region.regionName }}</td>
-                  <td>{{ region.income }}</td>
-                  <td>{{ region.count }}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </li>
-
         <li class="center-column">  <!-- 中间列 -->
           <!-- 今日收入 -->
           <div class="boxall" style="height:200px">
@@ -139,27 +88,41 @@
           </div>
           <!-- 长时间停车情况 -->
           <div class="boxall" style="height:320px">
-            <div class="alltitle">长时间停车情况</div>
-            <div class="navboxall">
-              <div class="long-time-table">
-                <div class="long-time-header">
-                  <span>车牌号</span>
-                  <span>停车时长</span>
-                  <span>区域</span>
-                  <span>状态</span>
+<!--            <div class="boxall" style="height:260px;">-->
+              <div class="alltitle">服务评论情况</div>
+              <div class="navboxall">
+                <div class="admin-status">
+                  <div v-for="admin in adminStatus" :key="admin.userId" class="admin-item">
+                    <img :src="admin.avatar" class="admin-avatar" />
+                    <div class="admin-info">
+                      <div class="admin-name">{{ admin.userName }}</div>
+                      <div class="admin-name">{{ admin.content }}</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="long-time-body">
-                  <ul>
-                    <li v-for="record in longTimeRecords" :key="record.id">
-                      <span>{{ record.plateNumber }}</span>
-                      <span class="duration-warning">{{ record.duration }}</span>
-                      <span>{{ record.region }}</span>
-                      <span :class="getStatusClass(record.status)">{{ record.status }}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+<!--              </div>-->
             </div>
+<!--            <div class="alltitle">长时间停车情况</div>-->
+<!--            <div class="navboxall">-->
+<!--              <div class="long-time-table">-->
+<!--                <div class="long-time-header">-->
+<!--                  <span>车牌号</span>-->
+<!--                  <span>停车时长</span>-->
+<!--                  <span>区域</span>-->
+<!--                  <span>状态</span>-->
+<!--                </div>-->
+<!--                <div class="long-time-body">-->
+<!--                  <ul>-->
+<!--                    <li v-for="record in longTimeRecords" :key="record.id">-->
+<!--                      <span>{{ record.plateNumber }}</span>-->
+<!--                      <span class="duration-warning">{{ record.duration }}</span>-->
+<!--                      <span>{{ record.region }}</span>-->
+<!--                      <span :class="getStatusClass(record.status)">{{ record.status }}</span>-->
+<!--                    </li>-->
+<!--                  </ul>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
           </div>
         </li>
       </ul>
