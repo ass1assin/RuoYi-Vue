@@ -100,29 +100,7 @@
                     </div>
                   </div>
                 </div>
-<!--              </div>-->
             </div>
-<!--            <div class="alltitle">长时间停车情况</div>-->
-<!--            <div class="navboxall">-->
-<!--              <div class="long-time-table">-->
-<!--                <div class="long-time-header">-->
-<!--                  <span>车牌号</span>-->
-<!--                  <span>停车时长</span>-->
-<!--                  <span>区域</span>-->
-<!--                  <span>状态</span>-->
-<!--                </div>-->
-<!--                <div class="long-time-body">-->
-<!--                  <ul>-->
-<!--                    <li v-for="record in longTimeRecords" :key="record.id">-->
-<!--                      <span>{{ record.plateNumber }}</span>-->
-<!--                      <span class="duration-warning">{{ record.duration }}</span>-->
-<!--                      <span>{{ record.region }}</span>-->
-<!--                      <span :class="getStatusClass(record.status)">{{ record.status }}</span>-->
-<!--                    </li>-->
-<!--                  </ul>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
           </div>
         </li>
       </ul>
@@ -259,22 +237,34 @@ export default {
     // 加载收入相关数据
     async loadIncomeData() {
       try {
-        const [todayRes, yearRes, monthRes] = await Promise.all([
-          listOrder(),
-          listOrder(),
-          listOrder()
-        ])
+        const res = await listOrder()
+        if (res.code === 200) {
+          const orders = res.rows
+          const now = new Date()
+          const currentMonth = now.getMonth() + 1
+          const currentYear = now.getFullYear()
 
-        if (todayRes.code === '200') {
-          this.todayIncome = parseFloat(todayRes.data) || 0
-        }
+          // 计算总收入
+          this.todayIncome = orders.reduce((sum, order) => sum + order.totalPrice, 0)
 
-        if (yearRes.code === '200') {
-          this.yearIncome = parseFloat(yearRes.data) || 0
-        }
+          // 计算月收入
+          this.monthIncome = orders.reduce((sum, order) => {
+            const orderDate = new Date(order.createTime)
+            if (orderDate.getMonth() + 1 === currentMonth &&
+                orderDate.getFullYear() === currentYear) {
+              return sum + order.totalPrice
+            }
+            return sum
+          }, 0)
 
-        if (monthRes.code === '200') {
-          this.monthIncome = parseFloat(monthRes.data) || 0
+          // 计算年收入
+          this.yearIncome = orders.reduce((sum, order) => {
+            const orderDate = new Date(order.createTime)
+            if (orderDate.getFullYear() === currentYear) {
+              return sum + order.totalPrice
+            }
+            return sum
+          }, 0)
         }
       } catch (error) {
         console.error('加载收入数据失败:', error)
