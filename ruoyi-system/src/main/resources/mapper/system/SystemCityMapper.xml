@@ -78,6 +78,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <!-- 删除城市所有关联服务 -->
+    <delete id="deleteCityServices">
+        delete from system_city_service where city_id = #{cityId}
+    </delete>
+
+    <!-- 批量插入城市服务关联 -->
+    <insert id="batchInsertCityServices">
+        insert into system_city_service (city_id, service_id) values
+        <foreach collection="serviceIds" item="serviceId" separator=",">
+            (#{cityId}, #{serviceId})
+        </foreach>
+    </insert>
+
     <delete id="deleteSystemCityById" parameterType="Long">
         delete from system_city where id = #{id}
     </delete>

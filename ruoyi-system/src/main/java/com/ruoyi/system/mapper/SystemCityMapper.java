@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.system.domain.CityDTO;
 import com.ruoyi.system.domain.SystemCity;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 城市Mapper接口
@@ -45,6 +46,15 @@ public interface SystemCityMapper
      */
     public int updateSystemCity(SystemCity systemCity);
 
+    /**
+     * 删除城市所有关联服务
+     */
+    public int deleteCityServices(Long cityId);
+
+    /**
+     * 批量插入城市服务关联
+     */
+    public int batchInsertCityServices(@Param("cityId") Long cityId, @Param("serviceIds") List<Long> serviceIds);
     /**
      * 删除城市
      *

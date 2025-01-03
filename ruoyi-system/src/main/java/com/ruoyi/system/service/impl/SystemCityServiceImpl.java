@@ -1,6 +1,7 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ruoyi.system.domain.CityDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,28 @@ public class SystemCityServiceImpl implements ISystemCityService
     @Override
     public int updateSystemCity(SystemCity systemCity)
     {
-        return systemCityMapper.updateSystemCity(systemCity);
+        // 更新城市基本信息
+        int rows = systemCityMapper.updateSystemCity(systemCity);
+
+        // 更新城市服务关联
+        if (systemCity.getServices() != null && !systemCity.getServices().isEmpty()) {
+            // 先删除原有关联
+            systemCityMapper.deleteCityServices(systemCity.getId());
+
+            // 获取选中的服务ID
+            List<Long> selectedServiceIds = systemCity.getServices().stream()
+                    .filter(service -> service.getSelected())
+                    .map(service -> service.getId())
+                    .collect(Collectors.toList());
+
+            // 如果有选中的服务，则批量插入新关联
+            if (!selectedServiceIds.isEmpty()) {
+                systemCityMapper.batchInsertCityServices(systemCity.getId(), selectedServiceIds);
+            }
+        }
+
+        return rows;
+//        return systemCityMapper.updateSystemCity(systemCity);
     }
 
     /**

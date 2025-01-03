@@ -6,6 +6,7 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 城市对象 system_city
@@ -31,6 +32,9 @@ public class SystemCity implements Serializable
     /** 城市基础服务费用 */
     @Excel(name = "城市基础服务费用")
     private Long baseServiceFee;
+
+    private List<ServiceDTO> services; // 服务列表
+
 
     public void setId(Long id)
     {
@@ -67,6 +71,14 @@ public class SystemCity implements Serializable
     public Long getBaseServiceFee()
     {
         return baseServiceFee;
+    }
+
+    public List<ServiceDTO> getServices() {
+        return services;
+    }
+
+    public void setServices(List<ServiceDTO> services) {
+        this.services = services;
     }
 
     @Override

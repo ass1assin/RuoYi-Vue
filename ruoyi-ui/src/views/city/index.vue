@@ -114,6 +114,23 @@
         <el-form-item label="城市基础服务费用" prop="baseServiceFee">
           <el-input v-model="form.baseServiceFee" placeholder="请输入城市基础服务费用" />
         </el-form-item>
+        <!-- 新增服务多选项 -->
+        <el-form-item label="开通服务" prop="services">
+          <el-select
+            v-model="selectedServiceIds"
+            multiple
+            collapse-tags
+            placeholder="请选择开通服务"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="service in form.services"
+              :key="service.id"
+              :label="service.name"
+              :value="service.id"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -166,7 +183,8 @@ export default {
         status: [
           { required: true, message: "请选择开通状态", trigger: "change" }
         ]
-      }
+      },
+      selectedServiceIds: [], // 已选择的服务ID数组
     };
   },
   created() {
@@ -209,9 +227,11 @@ export default {
       this.form = {
         id: null,
         cityName: null,
-        status: 0,  // 默认设置为未开通
-        baseServiceFee: null
+        status: 0,
+        baseServiceFee: null,
+        services: []
       };
+      this.selectedServiceIds = []; // 重置选中的服务ID
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -242,6 +262,10 @@ export default {
       const id = row.id || this.ids
       getCity(id).then(response => {
         this.form = response.data;
+        // 初始化选中的服务ID（筛选出 selected 为 true 的服务）
+        this.selectedServiceIds = this.form.services
+          .filter(service => service.selected)
+          .map(service => service.id);
         this.open = true;
         this.title = "修改城市";
       });
@@ -250,6 +274,14 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          // 更新服务的选中状态
+          if (this.form.services) {
+            this.form.services = this.form.services.map(service => ({
+              ...service,
+              selected: this.selectedServiceIds.includes(service.id)
+            }));
+          }
+
           if (this.form.id != null) {
             updateCity(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -298,6 +330,23 @@ export default {
   background-color: #f9e8e3; /* 淡棕色背景 */
   padding: 2px 6px;
   border-radius: 4px;
+}
+
+// 添加样式使复选框组更美观
+.el-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  
+  .el-checkbox {
+    margin-right: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+// 可以添加一些自定义样式
+.el-select {
+  width: 100%;
 }
 
 </style>

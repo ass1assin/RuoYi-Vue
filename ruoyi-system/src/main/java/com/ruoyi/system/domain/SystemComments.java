@@ -46,6 +46,8 @@ public class SystemComments extends BaseEntity
 
     private  String userName;
 
+    private String avatar;
+
     public String getServiceName() {
         return serviceName;
     }
@@ -124,6 +126,14 @@ public class SystemComments extends BaseEntity
     public Long getParentId()
     {
         return parentId;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     @Override

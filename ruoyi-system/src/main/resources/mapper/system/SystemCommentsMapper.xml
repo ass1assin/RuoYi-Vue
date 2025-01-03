@@ -15,16 +15,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="userName"    column="user_name"    />
         <result property="serviceName"    column="service_name"    />
+        <result property="avatar"    column="avatar"    />
     </resultMap>
 
     <sql id="selectSystemCommentsVo">
-        select id, user_id, service_id, rating, content, image_urls, parent_id, create_time from system_comment
+        select id, user_id, service_id, rating, content, image_urls, parent_id, create_time,avatar from system_comment
     </sql>
 
     <select id="selectSystemCommentsList" parameterType="SystemComments" resultMap="SystemCommentsResult">
         select
             sc.*,
             su.nick_name as user_name,
+            su.avatar,
             ss.name as service_name
         from system_comment as sc
         left join sys_user as su on sc.user_id = su.user_id
