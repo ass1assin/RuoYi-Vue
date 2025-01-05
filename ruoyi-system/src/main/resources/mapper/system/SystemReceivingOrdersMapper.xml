@@ -42,14 +42,18 @@
 
 
     <select id="getAvailablePersonnel" parameterType="SystemOrder" resultMap="SystemServicePersonnelResult">
-        SELECT ssp.*
-        FROM system_service_personnel ssp
-        WHERE ssp.id NOT IN (SELECT DISTINCT o.personnel_id
-                             FROM system_order o
-                             WHERE o.end_time &gt;= #{startTime}
-                               AND o.start_time &lt;= #{endTime}
-                               AND o.status = 0)
-          AND ssp.location = #{location}
+        SELECT sp.id,
+               sp.name,
+               sp.phone,
+               sp.location,
+               sp.service_type,
+               sp.work_day
+        FROM `system_service_personnel` sp
+                 INNER JOIN `system_personnel_schedule` sps
+                            ON sp.id = sps.personnel_id
+        WHERE sp.location = #{location}
+          AND sps.start_time &lt;= #{startTime}
+          AND sps.end_time &gt;= #{endTime}
     </select>
 
 

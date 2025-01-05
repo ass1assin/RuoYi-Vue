@@ -65,71 +65,68 @@ public class SystemReceivingOrdersServiceImpl implements ISystemReceivingOrdersS
             systemReceivingOrdersMapper.updateSystemReceivingOrders(order);
         }
     }
-
     public List<SystemServicePersonnel> getAvailablePersonnel(SystemOrder systemOrder) {
-        return systemReceivingOrdersMapper.getAvailablePersonnel(systemOrder);
+        // 从数据库查询数据
+        List<SystemServicePersonnel> personnelList = systemReceivingOrdersMapper.getAvailablePersonnel(systemOrder);
+
+        // 将指定日期转换为星期几
+        String dayOfWeek = getDayOfWeek(systemOrder.getStartTime()); // 假设 startTime 是指定的日期
+
+        // 过滤掉 workDay 不包含 dayOfWeek 的数据
+        return personnelList.stream()
+                .filter(personnel -> isDayIncludedInWorkDay(dayOfWeek, personnel.getWorkDay()))
+                .collect(Collectors.toList());
     }
-//    public List<SystemServicePersonnel> getAvailablePersonnel(SystemOrder systemOrder) {
-//        // 从数据库查询数据
-//        List<SystemServicePersonnel> personnelList = systemReceivingOrdersMapper.getAvailablePersonnel(systemOrder);
-//
-//        // 将指定日期转换为星期几
-//        String dayOfWeek = getDayOfWeek(systemOrder.getStartTime()); // 假设 startTime 是指定的日期
-//
-//        // 过滤掉 workDay 不包含 dayOfWeek 的数据
-//        return personnelList.stream()
-//                .filter(personnel -> isDayIncludedInWorkDay(dayOfWeek, personnel.getWorkDay()))
-//                .collect(Collectors.toList());
-//    }
-//
-//    // 工具方法：将日期转换为中文的“周几”
-//    private String getDayOfWeek(Timestamp date) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.CHINA); // 返回如“周一”的格式
-//        return sdf.format(date);
-//    }
-//
-//    // 工具方法：判断 workDay 是否包含指定的 dayOfWeek
-//    private boolean isDayIncludedInWorkDay(String dayOfWeek, String workDay) {
-//        if (workDay == null || workDay.isEmpty()) {
-//            return false;
-//        }
-//        // workDay 可能是 “周一至周五” 或 “周一,周二,周三” 等格式
-//        if (workDay.contains("至")) {
-//            // 处理范围格式，如“周一至周五”
-//            String[] range = workDay.split("至");
-//            if (range.length == 2) {
-//                String startDay = range[0].trim();
-//                String endDay = range[1].trim();
-//                return isDayInRange(dayOfWeek, startDay, endDay);
-//            }
-//        } else {
-//            // 处理逗号分隔的格式，如“周一,周二,周三”
-//            return workDay.contains(dayOfWeek);
-//        }
-//        return false;
-//    }
-//
-//    // 工具方法：判断 dayOfWeek 是否在 startDay 和 endDay 范围内
-//    private boolean isDayInRange(String dayOfWeek, String startDay, String endDay) {
-//        String[] weekDays = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
-//        int startIndex = -1, endIndex = -1, currentIndex = -1;
-//
-//        for (int i = 0; i < weekDays.length; i++) {
-//            if (weekDays[i].equals(startDay)) startIndex = i;
-//            if (weekDays[i].equals(endDay)) endIndex = i;
-//            if (weekDays[i].equals(dayOfWeek)) currentIndex = i;
-//        }
-//        if (startIndex == -1 || endIndex == -1 || currentIndex == -1) {
-//            return false;
-//        }
-//        if (startIndex <= endIndex) {
-//            // 正常范围，例如“周一至周五”
-//            return currentIndex >= startIndex && currentIndex <= endIndex;
-//        } else {
-//            // 跨周范围，例如“周五至周二”
-//            return currentIndex >= startIndex || currentIndex <= endIndex;
-//        }
-//    }
+
+// 工具方法：将日期转换为中文的“周几”
+    private String getDayOfWeek(Timestamp date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.CHINA); // 返回如“星期二”的格式
+        String dayOfWeek = sdf.format(date);
+        return dayOfWeek.replace("星期", "周"); // 将“星期”替换为“周”
+    }
+
+    // 工具方法：判断 workDay 是否包含指定的 dayOfWeek
+    private boolean isDayIncludedInWorkDay(String dayOfWeek, String workDay) {
+        if (workDay == null || workDay.isEmpty()) {
+            return false;
+        }
+        // workDay 可能是 “周一至周五” 或 “周一,周二,周三” 等格式
+        if (workDay.contains("至")) {
+            // 处理范围格式，如“周一至周五”
+            String[] range = workDay.split("至");
+            if (range.length == 2) {
+                String startDay = range[0].trim();
+                String endDay = range[1].trim();
+                return isDayInRange(dayOfWeek, startDay, endDay);
+            }
+        } else {
+            // 处理逗号分隔的格式，如“周一,周二,周三”
+            return workDay.contains(dayOfWeek);
+        }
+        return false;
+    }
+
+    // 工具方法：判断 dayOfWeek 是否在 startDay 和 endDay 范围内
+    private boolean isDayInRange(String dayOfWeek, String startDay, String endDay) {
+        String[] weekDays = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+        int startIndex = -1, endIndex = -1, currentIndex = -1;
+
+        for (int i = 0; i < weekDays.length; i++) {
+            if (weekDays[i].equals(startDay)) startIndex = i;
+            if (weekDays[i].equals(endDay)) endIndex = i;
+            if (weekDays[i].equals(dayOfWeek)) currentIndex = i;
+        }
+        if (startIndex == -1 || endIndex == -1 || currentIndex == -1) {
+            return false;
+        }
+        if (startIndex <= endIndex) {
+            // 正常范围，例如“周一至周五”
+            return currentIndex >= startIndex && currentIndex <= endIndex;
+        } else {
+            // 跨周范围，例如“周五至周二”
+            return currentIndex >= startIndex || currentIndex <= endIndex;
+        }
+    }
 
     /**
      * 新增订单管理

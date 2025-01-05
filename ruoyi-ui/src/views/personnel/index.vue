@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-<!--      <el-form-item label="关联的用户ID" prop="userId">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.userId"-->
-<!--          placeholder="请输入关联的用户ID"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
       <el-form-item label="服务人员姓名" prop="name" label-width="110px">
         <el-input
           v-model="queryParams.name"
@@ -98,7 +90,7 @@
       <el-table-column label="服务人员姓名" align="center" prop="name" />
       <el-table-column label="服务人员电话" align="center" prop="phone" />
 
-      <el-table-column label="��箱" align="center" prop="email" />
+      <el-table-column label="邮箱" align="center" prop="email" />
       <el-table-column label="服务经验" align="center" prop="experience" />
       <el-table-column label="服务人员所在城市" align="center" prop="location" />
 <!--      <el-table-column label="所在城市id" align="center" prop="cityId" />-->
@@ -150,24 +142,18 @@
           <el-input v-model="form.email" placeholder="请输入服务人员邮箱" />
         </el-form-item>
         <el-form-item label="服务经验" prop="experience">
-          <el-input v-model="form.experience" type="textarea" placeholder="输内���" />
+          <el-input v-model="form.experience" type="textarea" placeholder="服务经验" />
         </el-form-item>
         <el-form-item label="服务人员所在城市" prop="location">
           <el-input v-model="form.location" placeholder="请输入服务人员所在城市" />
         </el-form-item>
-<!--        <el-form-item label="所在城市id" prop="cityId">-->
-<!--          <el-input v-model="form.cityId" placeholder="请输入所在城市id" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="资质认证" prop="qualification">-->
-<!--          <el-input v-model="form.qualification" placeholder="请输入资质认证" />-->
-<!--        </el-form-item>-->
         <el-form-item label="服务人员的工作周期" prop="workDay">
           <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期" />
         </el-form-item>
         <el-form-item label="擅长的服务类型" prop="serviceType">
-          <el-select 
-            v-model="selectedServiceTypes" 
-            multiple 
+          <el-select
+            v-model="selectedServiceTypes"
+            multiple
             placeholder="请选择服务类型"
             @change="handleServiceTypeChange"
           >
@@ -367,15 +353,15 @@ export default {
       this.reset();
       const id = row.id || this.ids;
       console.log('修改操作 - 行数据:', row);
-      
+
       getPersonnel(id).then(response => {
         console.log('获取到的人员详情:', response.data);
         this.form = response.data;
-        
+
         // 处理 serviceType
         if (this.form.serviceType) {
           console.log('处理前的 serviceType:', this.form.serviceType, typeof this.form.serviceType);
-          
+
           let serviceTypeArray = [];
           if (typeof this.form.serviceType === 'string') {
             // 尝试解析可能的 JSON 字符串
@@ -390,9 +376,9 @@ export default {
           } else {
             serviceTypeArray = [this.form.serviceType];
           }
-          
+
           console.log('解析后的数组:', serviceTypeArray);
-          
+
           this.selectedServiceTypes = serviceTypeArray
             .filter(id => id !== null && id !== undefined && id !== '')
             .map(id => {
@@ -401,10 +387,10 @@ export default {
             })
             .filter(id => id !== null)
             .filter((value, index, self) => self.indexOf(value) === index);
-          
+
           console.log('最终的 selectedServiceTypes:', this.selectedServiceTypes);
         }
-        
+
         // 解析工作时间
         if (this.form.workTimes) {
           console.log('处理前的工作时间:', this.form.workTimes);
@@ -422,7 +408,7 @@ export default {
             workTime2: this.workTime2
           });
         }
-        
+
         this.open = true;
         this.title = "修改服务人员管理";
       });
@@ -435,7 +421,7 @@ export default {
           if (this.selectedServiceTypes.length > 0) {
             this.form.serviceType = this.selectedServiceTypes.join(',');
           }
-          
+
           if (this.form.id != null) {
             updatePersonnel(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
