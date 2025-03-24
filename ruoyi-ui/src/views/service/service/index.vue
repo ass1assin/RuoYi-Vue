@@ -25,13 +25,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="每小时价格" prop="hourRate" label-width="100px">
-        <el-input
-          v-model="queryParams.hourRate"
-          placeholder="请输入每小时价格"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="每小时价格" prop="hourlyRate" label-width="100px">
+<!--        <el-input-->
+<!--          v-model="queryParams.hourRate"-->
+<!--          placeholder="请输入每小时价格"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+        <el-radio v-model="queryParams.hourlyRate" label="50">50元</el-radio>
+        <el-radio v-model="queryParams.hourlyRate" style="margin-left: -10%" label="100">100元</el-radio>
       </el-form-item>
 
       <el-form-item>
@@ -215,7 +217,7 @@ export default {
         description: null,
         categoryName: null,
         hours: null,
-        hourRate: null,
+        hourlyRate: null,
       },
       // 表单参数
       form: {

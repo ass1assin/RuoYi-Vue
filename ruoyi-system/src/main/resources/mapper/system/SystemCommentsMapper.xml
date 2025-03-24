@@ -51,14 +51,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSystemComments" parameterType="SystemComments" useGeneratedKeys="true" keyProperty="id">
         insert into system_comment
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="userId != null">user_id,</if>
-            <if test="serviceId != null">service_id,</if>
-            <if test="rating != null">rating,</if>
-            <if test="content != null">content,</if>
-            <if test="imageUrls != null">image_urls,</if>
-            <if test="parentId != null">parent_id,</if>
-            <if test="createTime != null">create_time,</if>
-         </trim>
+            <if test="userId!=null">user_id,</if>
+            <if test="serviceId!=null">service_id,</if>
+            <if test="rating!=null">rating,</if>
+            <if test="content!=null">content,</if>
+            <if test="imageUrls!=null">image_urls,</if>
+            <if test="parentId!=null">parent_id,</if>
+            <if test="createTime!=null">create_time,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId},</if>
             <if test="serviceId != null">#{serviceId},</if>
@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="imageUrls != null">#{imageUrls},</if>
             <if test="parentId != null">#{parentId},</if>
             <if test="createTime != null">#{createTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSystemComments" parameterType="SystemComments">

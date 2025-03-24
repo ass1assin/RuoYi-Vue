@@ -31,10 +31,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join system_service_category as ssc on ss.category_id = ssc.id
         left join system_service_image as sii on ss.id = sii.service_id  <!-- 左连接图片表 -->
         <where>
-            <if test="name != null  and name != ''"> and ss.name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and ss.description = #{description}</if>
-            <if test="categoryName != null "> and ssc.name = #{categoryName}</if>
-            <if test="hourlyRate != null "> and ss.hourly_rate = #{hourlyRate}</if>
+            <if test="name!=null and name!=''">and ss.name like concat('%',#{name},'%')</if>
+            <if test="description!=null and description!=''">and ss.description like concat('%',#{description},'%')</if>
+            <if test="categoryName!=null">and ssc.name like concat('%',#{categoryName},'%')</if>
+            <choose>
+                <when test="hourlyRate == 50">and ss.hourly_rate=50</when>
+                <when test="hourlyRate == 100">and ss.hourly_rate=100</when>
+                <otherwise></otherwise>
+            </choose>
+<!--            <if test="hourlyRate!=null">and ss.hourly_rate =#{hourlyRate}</if>-->
         </where>
     </select>
 
@@ -69,7 +74,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="price != null">#{price},</if>
             <if test="hours != null">#{hours},</if>
             <if test="hourlyRate != null">#{hourlyRate},</if>
-
          </trim>
     </insert>
 
@@ -113,4 +117,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+<!--    3.1的foreach练习-->
+    <insert id="insertUserTag">
+         insert into user_tag (user_id,tag_id)
+         values
+         <foreach item="tagId" collection="ids" separator=",">
+             (#{userId},#{tagId})
+         </foreach>
+    </insert>
 </mapper>

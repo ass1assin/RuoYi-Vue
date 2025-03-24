@@ -78,7 +78,7 @@ public class SystemReceivingOrdersServiceImpl implements ISystemReceivingOrdersS
                 .collect(Collectors.toList());
     }
 
-// 工具方法：将日期转换为中文的“周几”
+    // 工具方法：将日期转换为中文的“周几”
     private String getDayOfWeek(Timestamp date) {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.CHINA); // 返回如“星期二”的格式
         String dayOfWeek = sdf.format(date);
@@ -90,7 +90,7 @@ public class SystemReceivingOrdersServiceImpl implements ISystemReceivingOrdersS
         if (workDay == null || workDay.isEmpty()) {
             return false;
         }
-        // workDay 可能是 “周一至周五” 或 “周一,周二,周三” 等格式
+        // 如果 workDay 包含“至”，则将其拆分为起始日和结束日
         if (workDay.contains("至")) {
             // 处理范围格式，如“周一至周五”
             String[] range = workDay.split("至");
@@ -99,7 +99,8 @@ public class SystemReceivingOrdersServiceImpl implements ISystemReceivingOrdersS
                 String endDay = range[1].trim();
                 return isDayInRange(dayOfWeek, startDay, endDay);
             }
-        } else {
+        }
+        else {
             // 处理逗号分隔的格式，如“周一,周二,周三”
             return workDay.contains(dayOfWeek);
         }

@@ -161,7 +161,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url("https://www.helloimg.com/i/2024/11/28/674745ac6dd4b.jpg");
+  background-image: url("https://www.helloimg.com/i/2024/12/07/6753e56656491.png");
   background-size: cover;
   position: relative;
 

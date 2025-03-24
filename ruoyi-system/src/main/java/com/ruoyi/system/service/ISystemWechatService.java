@@ -20,6 +20,8 @@ public interface ISystemWechatService {
 
     public int createOrder(SystemOrders systemOrders);
 
+//    public int updateOrder(SystemOrders systemOrders);
+
     public int cancelOrder(SystemOrders systemOrders);
 
     public List<SystemComment> getComment(SystemComment systemComment);

@@ -50,6 +50,10 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
         return systemWechatMapper.createOrder(systemOrders);
     };
 
+//    public int updateOrder(SystemOrders systemOrders){
+//        return systemWechatMapper.updateOrder(systemOrders);
+//    };
+
     public int cancelOrder(SystemOrders systemOrders){
         return systemWechatMapper.cancelOrder(systemOrders);
     };
@@ -58,7 +62,7 @@ public class SystemWechatServiceImpl implements ISystemWechatService {
         return systemWechatMapper.getComment(systemComment);
     };
 
-
+    //计算时间
     private void calculateEndTime(SystemOrders systemOrders) {
         if (systemOrders.getStartTime() == null || systemOrders.getOrderPackage() == null) {
             throw new IllegalArgumentException("Start time or order package cannot be null.");

@@ -147,8 +147,8 @@
         <el-form-item label="服务人员所在城市" prop="location">
           <el-input v-model="form.location" placeholder="请输入服务人员所在城市" />
         </el-form-item>
-        <el-form-item label="服务人员的工作周期" prop="workDay">
-          <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期" />
+        <el-form-item label="服务人员的工作周期(周一至周五的格式)" prop="workDay">
+          <el-input v-model="form.workDay" placeholder="请输入服务人员的工作周期(周一至周五的格式)" />
         </el-form-item>
         <el-form-item label="擅长的服务类型" prop="serviceType">
           <el-select

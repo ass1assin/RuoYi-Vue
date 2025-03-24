@@ -160,9 +160,6 @@
         <el-form-item label="服务地点">
           <span>{{ form.location }}</span>
         </el-form-item>
-<!--        <el-form-item label="服务ID">-->
-<!--          <span>{{ form.serviceId }}</span>-->
-<!--        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">关 闭</el-button>

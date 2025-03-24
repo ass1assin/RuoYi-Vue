@@ -55,6 +55,12 @@ public class SystemWechatController extends BaseController {
         return toAjax(systemWechatService.createOrder(systemOrders));
     }
 
+//    @PutMapping("/updateOrder")
+//    public AjaxResult updateOrder(@RequestBody SystemOrders systemOrders)
+//    {
+//        return toAjax(systemWechatService.updateOrder(systemOrders));
+//    }
+
     @PutMapping("/cancelOrder")
     public AjaxResult cancelOrder(@RequestBody SystemOrders systemOrders)
     {

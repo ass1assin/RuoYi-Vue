@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.system.domain.SystemNewService;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 服务Mapper接口
@@ -64,4 +65,6 @@ public interface SystemNewServiceMapper
      * @return 结果
      */
     public int deleteSystemNewServiceByIds(Long[] ids);
+
+    public boolean insertUserTag(@Param("userId") int userId,@Param("ids") Long[] ids);
 }

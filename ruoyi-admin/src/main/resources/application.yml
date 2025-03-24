@@ -68,6 +68,8 @@ spring:
   # redis 配置
   redis:
     # 地址
+#    host: 39.108.104.226
+#    host: 172.28.243.77
     host: localhost
     # 端口，默认为6379
     port: 6379

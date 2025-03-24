@@ -31,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSystemCityList" parameterType="SystemCity" resultMap="SystemCityResult">
         <include refid="selectSystemCityVo"/>
         <where>
+            status = 1
             <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="baseServiceFee != null "> and base_service_fee = #{baseServiceFee}</if>

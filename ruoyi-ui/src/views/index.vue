@@ -31,15 +31,13 @@
             </div>
 
           </div>
-          <!-- 收入趋势 - 放大并居中 -->
           <div class="boxall trend-chart" style="height:450px">  <!-- 增加高度 -->
             <div class="alltitle">各区域订单分布</div>
             <div class="navboxall" id="echart4"></div>
           </div>
         </li>
 
-        <li class="right-column">  <!-- 右侧列 -->
-          <!-- 最近停车记录 -->
+        <li class="right-column">
           <div class="boxall" style="height:260px;">
             <div class="alltitle">最近下单记录</div>
             <div class="navboxall">
