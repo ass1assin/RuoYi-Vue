@@ -12,6 +12,7 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="getContract">生成合同</el-button>
       </el-form-item>
     </el-form>
 
@@ -84,6 +85,19 @@
       @pagination="getList"
     />
 
+    <el-dialog :visible.sync="openContract" width="500px" append-to-body>
+      <el-form :model="contractForm" label-width="80px">
+        <el-form-item label="开始时间">
+          <el-input v-model="contractForm.startTime" placeholder="请输入开始时间" />
+        </el-form-item>
+        <el-form-item label="结束时间">
+          <el-input v-model="contractForm.endTime"  placeholder="请输入结束时间" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="generate">点击生成</el-button>
+      </div>
+    </el-dialog>
     <!-- 添加或修改服务种类对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -110,6 +124,7 @@ import {
   updateCategory,
   yuanlistCategory
 } from "@/api/system/category";
+import {genRentContract} from "@/api/common/contract";
 
 export default {
   name: "Category",
@@ -133,6 +148,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      openContract: false,
+      contractForm: {},
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -181,6 +198,14 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
+    },
+    getContract(){
+      this.openContract = true;
+    },
+    generate(){
+      genRentContract(this.contractForm).then(response => {
+        console.log("=====%o",response)
+      })
     },
     /** 重置按钮操作 */
     resetQuery() {

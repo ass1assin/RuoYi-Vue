@@ -43,6 +43,11 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+        </dependency>
+
         <!-- 核心模块-->
         <dependency>
             <groupId>com.ruoyi</groupId>
@@ -75,6 +80,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.contract</groupId>
+            <artifactId>ruoyi-contract</artifactId>
+            <version>3.8.8</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

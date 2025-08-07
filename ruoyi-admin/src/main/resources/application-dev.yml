@@ -1,0 +1,7 @@
+
+
+# 开发环境安全配置
+medical:
+  security:
+    # 允许开发环境使用默认密钥
+    allow-default-key: true
