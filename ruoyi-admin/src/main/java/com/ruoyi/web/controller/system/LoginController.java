@@ -120,14 +120,14 @@ public class LoginController{
         return loginService.sendCode(loginParams);
     }
 
-    @GetMapping("/logout")
-    @ResponseBody
-    public AjaxResult logout(HttpServletRequest request) {
-        LoginUser loginUser = tokenService.getLoginUser(request);
-        if(null != loginUser){
-            tokenService.delLoginUser(loginUser.getToken());
-        }
-        return AjaxResult.success("退出成功！");
-    }
+//    @GetMapping("/logout")
+//    @ResponseBody
+//    public AjaxResult logout(HttpServletRequest request) {
+//        LoginUser loginUser = tokenService.getLoginUser(request);
+//        if(null != loginUser){
+//            tokenService.delLoginUser(loginUser.getToken());
+//        }
+//        return AjaxResult.success("退出成功！");
+//    }
 
 }

@@ -5,6 +5,8 @@ import com.ruoyi.web.test.core.datasource.SqlTemplateEngine;
 import com.ruoyi.web.test.core.datasource.model.BoundSql;
 import com.ruoyi.web.test.core.datasource.model.DataSourceConfig;
 import com.ruoyi.web.test.core.datasource.model.SqlTemplate;
+import com.ruoyi.web.test.core.dialect.DatabaseDialect;
+import com.ruoyi.web.test.core.dialect.DatabaseDialectAdapter;
 import com.ruoyi.web.test.core.service.MedicalDataSourceService;
 import com.ruoyi.web.test.core.util.DateParamConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,7 @@ public class MedicalDataSourceServiceImpl implements MedicalDataSourceService {
     public MedicalDataSourceServiceImpl(
             DynamicDataSourceManager dsManager,
             SqlTemplateEngine templateEngine,
-            DateParamConverter dateParamConverter
-    ) {
+            DateParamConverter dateParamConverter) {
         this.dsManager = dsManager;
         this.templateEngine = templateEngine;
         this.dateParamConverter = dateParamConverter;
@@ -40,29 +41,35 @@ public class MedicalDataSourceServiceImpl implements MedicalDataSourceService {
             String templateId,
             Map<String, Object> params
     ) {
-        //1.日期转换
+        // 1. 日期转换
         Map<String, Object> processedParams = dateParamConverter.convertDates(params);
+
         System.out.println("=== 解析模板: " + templateId + " ===");
-        System.out.println("原始SQL: " + templateEngine.getTemplate(templateId).getRawSql());
+        SqlTemplate template = templateEngine.getTemplate(templateId);
+        System.out.println("原始SQL: " + template.getRawSql());
 
-        //2.sql解析
+        // 2. SQL解析
         BoundSql boundSql = templateEngine.parseTemplate(templateId, processedParams);
+        String sql = boundSql.getSql();
 
-        System.out.println("生成SQL: " + boundSql.getSql());
+        System.out.println("生成SQL: " + sql);
         System.out.println("参数数量: " + boundSql.getParametersArray().length);
         System.out.println("参数: " + Arrays.toString(boundSql.getParametersArray()));
 
-        //3.获取数据源
-        //获取sql模板
-        SqlTemplate template = templateEngine.getTemplate(templateId);
-        // 使用hospital_code获取数据源
-        JdbcTemplate jdbcTemplate = dsManager.getJdbcTemplate(template.getHospitalCode());
+        // 3. 分页处理
+        if (params.containsKey("page") && params.containsKey("size")) {
+            int page = (int) params.get("page");
+            int size = (int) params.get("size");
+            int offset = (page - 1) * size;
+            sql = dsManager.getDialect(template.getHospitalCode())
+                    .paginate(sql, offset, size);
+        }
 
-        // 4. 执行查询
-        return jdbcTemplate.queryForList(
-                boundSql.getSql(),
-                boundSql.getParametersArray()
-        );
+        // 4. 获取数据源并执行查询
+        JdbcTemplate jdbcTemplate = dsManager.getJdbcTemplate(template.getHospitalCode());
+        System.out.println("最终SQL: " + sql);
+
+        return jdbcTemplate.queryForList(sql, boundSql.getParametersArray());
     }
 
     @Override
@@ -78,26 +85,4 @@ public class MedicalDataSourceServiceImpl implements MedicalDataSourceService {
         return jdbcTemplate.queryForList(sql, params);
     }
 
-//    @Override
-//    public void addDataSource(DataSourceConfig config) {
-//
-//    }
-
-//    @Override
-//    public void reloadTemplates() {
-//
-//    }
-
-    // 新增：支持返回自定义对象
-    public <T> List<T> executeQuery(String templateId, Map<String, Object> params, Class<T> clazz) {
-        BoundSql boundSql = templateEngine.parseTemplate(templateId, params);
-        SqlTemplate template = templateEngine.getTemplate(templateId);
-
-        JdbcTemplate jdbcTemplate = dsManager.getJdbcTemplate(template.getSource());
-        return jdbcTemplate.query(
-                boundSql.getSql(),
-                boundSql.getParametersArray(),
-                new BeanPropertyRowMapper<>(clazz)
-        );
-    }
 }

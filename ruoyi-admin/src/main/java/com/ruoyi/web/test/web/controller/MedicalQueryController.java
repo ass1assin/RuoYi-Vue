@@ -2,6 +2,7 @@ package com.ruoyi.web.test.web.controller;
 
 
 import com.ruoyi.web.test.core.service.MedicalDataSourceService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +32,7 @@ public class MedicalQueryController {
     public static class QueryRequest {
         private String templateId;
         private Map<String, Object> params;
-
-        // Getters and setters
+        private PageRequest page; // 分页参数
         public String getTemplateId() {
             return templateId;
         }
@@ -47,6 +47,14 @@ public class MedicalQueryController {
 
         public void setParams(Map<String, Object> params) {
             this.params = params;
+        }
+
+        public PageRequest getPage() {
+            return page;
+        }
+
+        public void setPage(PageRequest page) {
+            this.page = page;
         }
     }
 }

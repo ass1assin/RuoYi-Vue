@@ -2,9 +2,12 @@ package com.ruoyi.web.test.core.datasource;
 
 
 import com.ruoyi.web.test.core.datasource.model.DataSourceConfig;
+import com.ruoyi.web.test.core.dialect.DatabaseDialect;
+import com.ruoyi.web.test.core.dialect.DatabaseDialectAdapter;
 import com.ruoyi.web.test.core.exception.DataSourceNotFoundException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
@@ -16,7 +19,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DynamicDataSourceManager {
     private final Map<String, DataSource> dataSources = new ConcurrentHashMap<>();
+    private final Map<String, DatabaseDialect> dialectMap = new ConcurrentHashMap<>();
+    private final Map<String, DataSourceConfig> configCache = new ConcurrentHashMap<>();
+    private final DatabaseDialectAdapter dialectAdapter; // 注入方言适配器
 
+    @Autowired
+    public DynamicDataSourceManager(DatabaseDialectAdapter dialectAdapter) {
+        this.dialectAdapter = dialectAdapter;
+    }
     public void addDataSource(DataSourceConfig config) {
 
         HikariConfig hikariConfig = new HikariConfig();
@@ -25,28 +35,30 @@ public class DynamicDataSourceManager {
         hikariConfig.setPassword(config.getDecryptedPassword());
         hikariConfig.setMaximumPoolSize(config.getMaxPoolSize());
 
-        switch (config.getDbType().toLowerCase()) {
-            case "mysql":
-                hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-                break;
-            case "oracle":
-                hikariConfig.setDriverClassName("oracle.jdbc.OracleDriver");
-                break;
-            case "postgresql":
-                hikariConfig.setDriverClassName("org.postgresql.Driver");
-                break;
-            default:
-                throw new IllegalArgumentException("不支持的数据库类型: " + config.getDbType());
-        }
-
+        // 使用方言获取驱动类名
+        DatabaseDialect dialect = dialectAdapter.getDialect(config.getDbType());
+        hikariConfig.setDriverClassName(dialect.getDriverClassName());
+        // 存储方言信息
+        dialectMap.put(config.getName(), dialectAdapter.getDialect(config.getDbType()));
         try {
             DataSource dataSource = new HikariDataSource(hikariConfig);
             dataSources.put(config.getName(), dataSource);
+            dialectMap.put(config.getName(), dialect);
+            configCache.put(config.getName(), config);
             System.out.println("创建数据源 {} 成功: {}");
         } catch (Exception e) {
             System.out.println("创建数据源 {} 失败: {}");
             throw new RuntimeException("无法创建数据源: " + config.getName(), e);
         }
+    }
+
+    // 新增方法：获取数据源的方言
+    public DatabaseDialect getDialect(String datasourceName) {
+        DatabaseDialect dialect = dialectMap.get(datasourceName);
+        if (dialect == null) {
+            throw new DataSourceNotFoundException("数据源方言未配置: " + datasourceName);
+        }
+        return dialect;
     }
 
     public JdbcTemplate getJdbcTemplate(String datasourceName) {
@@ -56,8 +68,5 @@ public class DynamicDataSourceManager {
         }
         return new JdbcTemplate(ds);
     }
-    // 添加获取所有数据源名称的方法
-    public List<String> getAllDataSourceNames() {
-        return new ArrayList<>(dataSources.keySet());
-    }
+
 }

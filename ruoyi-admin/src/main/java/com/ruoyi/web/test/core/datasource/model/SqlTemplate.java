@@ -9,4 +9,5 @@ public class SqlTemplate {
     private String source;
     private String rawSql;
     private String hospitalCode; // 新增关键字段
+    private String dbType; // 新增数据库类型字段
 }
