@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +48,22 @@ public class MedicalDataSourceServiceImpl implements MedicalDataSourceService {
         System.out.println("=== 解析模板: " + templateId + " ===");
         SqlTemplate template = templateEngine.getTemplate(templateId);
         System.out.println("原始SQL: " + template.getRawSql());
+      // 2. 特殊处理函数参数
+        Map<String, Object> funcParams = new HashMap<>();
+        processedParams.forEach((key, value) -> {
+            if (key.startsWith("func_")) {
+                funcParams.put(key, value);
+            }
+        });
 
+        // 3. 合并参数
+        Map<String, Object> allParams = new HashMap<>(processedParams);
+        allParams.putAll(funcParams);
+
+        // 4. 解析模板
+        BoundSql boundSql = templateEngine.parseTemplate(templateId, allParams);
         // 2. SQL解析
-        BoundSql boundSql = templateEngine.parseTemplate(templateId, processedParams);
+//        BoundSql boundSql = templateEngine.parseTemplate(templateId, processedParams);
         String sql = boundSql.getSql();
 
         System.out.println("生成SQL: " + sql);

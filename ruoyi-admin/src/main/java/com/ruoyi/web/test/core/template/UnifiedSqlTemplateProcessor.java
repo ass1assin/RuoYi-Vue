@@ -11,27 +11,22 @@ import java.util.regex.Matcher;
 @Component
 public class UnifiedSqlTemplateProcessor {
 
+    private static final Pattern FUNCTION_PATTERN = Pattern.compile(
+            "\\{([a-z_]+):([^:}]+):([^}]+)\\}"
+    );
+
     public String processTemplate(String template, DatabaseDialect dialect) {
         // 1. 处理统一函数语法
-        Pattern funcPattern = Pattern.compile("\\{([a-z_]+):([^:]+):([^}]+)\\}");
-        Matcher matcher = funcPattern.matcher(template);
+        Matcher matcher = FUNCTION_PATTERN.matcher(template);
         StringBuffer sb = new StringBuffer();
 
         while (matcher.find()) {
             String funcName = matcher.group(1);
-            String arg1 = matcher.group(2).trim();
-            String arg2 = matcher.group(3).trim();
+            String arg = matcher.group(2).trim();
+            String format = matcher.group(3).trim();
 
-            switch (funcName) {
-                case "date":
-                    matcher.appendReplacement(sb, dialect.toChar(arg1, arg2));
-                    break;
-                case "to_date":
-                    matcher.appendReplacement(sb, dialect.toDate(arg1, arg2));
-                    break;
-                default:
-                    matcher.appendReplacement(sb, matcher.group(0));
-            }
+            String replacement = processFunction(funcName, arg, format, dialect, matcher.group(0));
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(replacement));
         }
         matcher.appendTail(sb);
         String processed = sb.toString();
@@ -40,19 +35,43 @@ public class UnifiedSqlTemplateProcessor {
         processed = processed.replace("{pagination}", "");
 
         // 3. 处理数据库特定语法
-        processed = replaceDbSpecificSyntax(processed, dialect);
-
-        return processed;
+        return replaceDbSpecificSyntax(processed, dialect);
     }
+
+    private String processFunction(String funcName, String arg, String format,
+                                   DatabaseDialect dialect, String original) {
+        // 判断是否是参数格式 #{param}
+        boolean isParam = arg.startsWith("#{") && arg.endsWith("}");
+        String paramName = isParam ? arg.substring(2, arg.length() - 1) : null;
+
+        switch (funcName) {
+            case "date":
+                if (isParam) {
+                    return dialect.toChar(":" + paramName, format);
+                } else {
+                    return dialect.toChar(arg, format);
+                }
+            case "to_date":
+                if (isParam) {
+                    return dialect.toDate(":" + paramName, format);
+                } else {
+                    return dialect.toDate(arg, format);
+                }
+            default:
+                return original;
+        }
+    }
+
     private String replaceDbSpecificSyntax(String sql, DatabaseDialect dialect) {
         String dbType = dialect.getDbType().toUpperCase();
+
+        // 移除所有反斜杠转义
+        sql = sql.replace("\\", "");
 
         switch (dbType) {
             case "ORACLE":
                 return sql.replace("`", "\"")
-                        .replace(":var", "#{var}")
-                        .replace("STR_TO_DATE", "TO_DATE")
-                        .replace("DATE_FORMAT", "TO_CHAR");
+                        .replace(":var", "#{var}");
             case "MYSQL":
                 return sql.replace("\"", "`")
                         .replace("TRUNC(", "DATE(")

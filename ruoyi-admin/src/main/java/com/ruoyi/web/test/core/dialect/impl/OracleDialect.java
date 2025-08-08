@@ -26,11 +26,21 @@ public class OracleDialect implements DatabaseDialect {
 
     @Override
     public String toChar(String column, String format) {
+        // 处理参数格式
+        if (column.startsWith(":")) {
+            String paramName = column.substring(1);
+            return "TO_CHAR(:" + paramName + ", '" + format + "')";
+        }
         return "TO_CHAR(" + column + ", '" + format + "')";
     }
 
     @Override
     public String toDate(String value, String format) {
+        // 处理参数格式
+        if (value.startsWith(":")) {
+            String paramName = value.substring(1);
+            return "TO_DATE(:" + paramName + ", '" + format + "')";
+        }
         return "TO_DATE('" + value + "', '" + format + "')";
     }
 

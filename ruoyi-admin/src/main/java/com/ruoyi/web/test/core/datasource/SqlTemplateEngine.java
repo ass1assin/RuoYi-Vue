@@ -66,6 +66,14 @@ public class SqlTemplateEngine {
 
             templates.forEach(t -> templateRepo.put(t.getId(), t));
             System.out.println("Loaded " + templates.size() + " SQL templates");
+
+            mybatisConfig.setDefaultScriptingLanguage(XMLLanguageDriver.class);
+            mybatisConfig.getTypeAliasRegistry().registerAlias("map", Map.class);
+
+            // 禁用字符串转义
+            Properties variables = new Properties();
+            variables.setProperty("escape", "");
+            mybatisConfig.setVariables(variables);
         } catch (Exception e) {
             throw new RuntimeException("加载SQL模板失败", e);
         }
@@ -76,15 +84,13 @@ public class SqlTemplateEngine {
         if (template == null) {
             throw new TemplateNotFoundException("SQL模板未找到: " + templateId);
         }
-
-//        // 1. 预处理SQL：移除函数内的占位符并转义XML特殊字符
-//        String processedSql = preprocessSql(template.getRawSql());
         String hospitalCode = template.getHospitalCode();
         // 获取数据源方言
         DatabaseDialect dialect = dsManager.getDialect(hospitalCode);
         // 处理统一模板
         String unifiedSql = templateProcessor.processTemplate(template.getRawSql(), dialect);
-
+        // 打印处理后的SQL
+        System.out.println("统一模板处理后SQL: " + unifiedSql);
         // 使用MyBatis处理参数化SQL
         SqlSource sqlSource = new RawSqlSource(mybatisConfig, unifiedSql, Map.class);
         org.apache.ibatis.mapping.BoundSql mybatisBoundSql = sqlSource.getBoundSql(params);
@@ -93,12 +99,24 @@ public class SqlTemplateEngine {
         List<ParameterMapping> filteredMappings = new ArrayList<>();
         Map<String, Object> realParams = new HashMap<>();
 
+        // 特殊处理函数中的参数
+        Map<String, String> functionParams = new HashMap<>();
+        params.forEach((key, value) -> {
+            if (key.startsWith("func_")) {
+                functionParams.put(key, value.toString());
+            } else {
+                realParams.put(key, value);
+            }
+        });
+
         for (ParameterMapping mapping : mybatisBoundSql.getParameterMappings()) {
             String property = mapping.getProperty();
-            // 只处理真实参数（非函数常量）
-            if (params.containsKey(property)) {
+            if (realParams.containsKey(property)) {
                 filteredMappings.add(mapping);
-                realParams.put(property, params.get(property));
+            } else if (functionParams.containsKey("func_" + property)) {
+                // 函数参数特殊处理
+                filteredMappings.add(mapping);
+                realParams.put(property, functionParams.get("func_" + property));
             }
         }
 
@@ -108,7 +126,7 @@ public class SqlTemplateEngine {
                 .toArray();
 
         return new BoundSql(
-                mybatisBoundSql.getSql(),  // 原始SQL
+                mybatisBoundSql.getSql().replace("''", "'"),   // 原始SQL
                 realParams,
                 orderedParams
         );

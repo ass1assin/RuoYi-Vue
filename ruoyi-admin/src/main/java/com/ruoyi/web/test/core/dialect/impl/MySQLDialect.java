@@ -22,18 +22,25 @@ public class MySQLDialect implements DatabaseDialect {
 
     @Override
     public String toChar(String column, String format) {
-        String mysqlFormat = format
-                .replace("YYYY", "%Y")
-                .replace("MM", "%m")
-                .replace("DD", "%d")
-                .replace("HH24", "%H")
-                .replace("MI", "%i")
-                .replace("SS", "%s");
-        return "DATE_FORMAT(" + column + ", '" + mysqlFormat + "')";
+        // 处理参数格式
+        if (column.startsWith(":")) {
+            String paramName = column.substring(1);
+            return formatForMySQL(":" + paramName, format);
+        }
+        return formatForMySQL(column, format);
     }
 
     @Override
     public String toDate(String value, String format) {
+        // 处理参数格式
+        if (value.startsWith(":")) {
+            String paramName = value.substring(1);
+            return dateForMySQL(":" + paramName, format);
+        }
+        return dateForMySQL("'" + value + "'", format);
+    }
+
+    private String formatForMySQL(String expr, String format) {
         String mysqlFormat = format
                 .replace("YYYY", "%Y")
                 .replace("MM", "%m")
@@ -41,7 +48,18 @@ public class MySQLDialect implements DatabaseDialect {
                 .replace("HH24", "%H")
                 .replace("MI", "%i")
                 .replace("SS", "%s");
-        return "STR_TO_DATE('" + value + "', '" + mysqlFormat + "')";
+        return "DATE_FORMAT(" + expr + ", '" + mysqlFormat + "')";
+    }
+
+    private String dateForMySQL(String expr, String format) {
+        String mysqlFormat = format
+                .replace("YYYY", "%Y")
+                .replace("MM", "%m")
+                .replace("DD", "%d")
+                .replace("HH24", "%H")
+                .replace("MI", "%i")
+                .replace("SS", "%s");
+        return "STR_TO_DATE(" + expr + ", '" + mysqlFormat + "')";
     }
 
     @Override

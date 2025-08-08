@@ -23,7 +23,9 @@ public class DateParamConverter {
 
         params.forEach((key, value) -> {
             if (isDateParam(key, value)) {
-                result.put(key, formatDate((String) value));
+                // 为函数参数添加前缀
+                result.put("func_" + key, formatDate((String) value));
+                result.put(key, value); // 保留原始值
             } else {
                 result.put(key, value);
             }
