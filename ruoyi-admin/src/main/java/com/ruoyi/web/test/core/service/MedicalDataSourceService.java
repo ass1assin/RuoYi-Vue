@@ -1,8 +1,6 @@
 package com.ruoyi.web.test.core.service;
 
 
-import com.ruoyi.web.test.core.datasource.model.DataSourceConfig;
-
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +21,4 @@ public interface MedicalDataSourceService {
      */
     List<Map<String, Object>> dynamicQuery(String datasource, String sql, Map<String, Object> params);
 
-    // 数据源管理接口
-//    void addDataSource(DataSourceConfig config);
-//    void testConnection(String datasourceName);
-//    void reloadTemplates();
 }

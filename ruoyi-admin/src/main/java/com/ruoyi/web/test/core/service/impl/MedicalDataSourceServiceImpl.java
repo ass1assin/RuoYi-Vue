@@ -3,15 +3,10 @@ package com.ruoyi.web.test.core.service.impl;
 import com.ruoyi.web.test.core.datasource.DynamicDataSourceManager;
 import com.ruoyi.web.test.core.datasource.SqlTemplateEngine;
 import com.ruoyi.web.test.core.datasource.model.BoundSql;
-import com.ruoyi.web.test.core.datasource.model.DataSourceConfig;
 import com.ruoyi.web.test.core.datasource.model.SqlTemplate;
-import com.ruoyi.web.test.core.dialect.DatabaseDialect;
-import com.ruoyi.web.test.core.dialect.DatabaseDialectAdapter;
 import com.ruoyi.web.test.core.service.MedicalDataSourceService;
 import com.ruoyi.web.test.core.util.DateParamConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -26,7 +21,6 @@ public class MedicalDataSourceServiceImpl implements MedicalDataSourceService {
     private final DynamicDataSourceManager dsManager;
     private final SqlTemplateEngine templateEngine;
     private final DateParamConverter dateParamConverter;
-
 
     public MedicalDataSourceServiceImpl(
             DynamicDataSourceManager dsManager,
@@ -60,10 +54,9 @@ public class MedicalDataSourceServiceImpl implements MedicalDataSourceService {
         Map<String, Object> allParams = new HashMap<>(processedParams);
         allParams.putAll(funcParams);
 
-        // 4. 解析模板
+        // 4. 解析模板/////
         BoundSql boundSql = templateEngine.parseTemplate(templateId, allParams);
-        // 2. SQL解析
-//        BoundSql boundSql = templateEngine.parseTemplate(templateId, processedParams);
+
         String sql = boundSql.getSql();
 
         System.out.println("生成SQL: " + sql);

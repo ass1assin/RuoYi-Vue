@@ -1,4 +1,4 @@
-package com.ruoyi.web.test.core.dialect.impl;
+package com.ruoyi.web;
 
 import com.ruoyi.web.test.core.dialect.DatabaseDialect;
 

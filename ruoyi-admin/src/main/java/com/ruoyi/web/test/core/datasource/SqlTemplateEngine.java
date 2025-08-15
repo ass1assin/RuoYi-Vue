@@ -1,10 +1,8 @@
 package com.ruoyi.web.test.core.datasource;
 
-
 import com.ruoyi.web.test.core.datasource.model.BoundSql;
 import com.ruoyi.web.test.core.datasource.model.SqlTemplate;
 import com.ruoyi.web.test.core.dialect.DatabaseDialect;
-import com.ruoyi.web.test.core.dialect.DatabaseDialectAdapter;
 import com.ruoyi.web.test.core.exception.TemplateNotFoundException;
 import com.ruoyi.web.test.core.template.UnifiedSqlTemplateProcessor;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -20,21 +18,18 @@ import javax.annotation.PostConstruct;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class SqlTemplateEngine {
     private final JdbcTemplate configJdbcTemplate;
     private final Map<String, SqlTemplate> templateRepo = new ConcurrentHashMap<>();
     private final Configuration mybatisConfig = new Configuration();
-    // 添加依赖
+
     private final UnifiedSqlTemplateProcessor templateProcessor;
     private final DynamicDataSourceManager dsManager;
 
     @Autowired
     public SqlTemplateEngine(@Qualifier("configJdbcTemplate") JdbcTemplate configJdbcTemplate,
-                             DatabaseDialectAdapter dialectAdapter,
                              UnifiedSqlTemplateProcessor templateProcessor,
                              DynamicDataSourceManager dsManager) {
         this.configJdbcTemplate = configJdbcTemplate;
@@ -67,8 +62,8 @@ public class SqlTemplateEngine {
             templates.forEach(t -> templateRepo.put(t.getId(), t));
             System.out.println("Loaded " + templates.size() + " SQL templates");
 
-            mybatisConfig.setDefaultScriptingLanguage(XMLLanguageDriver.class);
-            mybatisConfig.getTypeAliasRegistry().registerAlias("map", Map.class);
+//            mybatisConfig.setDefaultScriptingLanguage(XMLLanguageDriver.class);
+//            mybatisConfig.getTypeAliasRegistry().registerAlias("map", Map.class);
 
             // 禁用字符串转义
             Properties variables = new Properties();

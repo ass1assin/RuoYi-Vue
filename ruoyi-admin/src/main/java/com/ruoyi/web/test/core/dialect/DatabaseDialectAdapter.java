@@ -2,7 +2,7 @@ package com.ruoyi.web.test.core.dialect;
 
 import com.ruoyi.web.test.core.dialect.impl.MySQLDialect;
 import com.ruoyi.web.test.core.dialect.impl.OracleDialect;
-import com.ruoyi.web.test.core.dialect.impl.PostgreSQLDialect;
+import com.ruoyi.web.PostgreSQLDialect;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

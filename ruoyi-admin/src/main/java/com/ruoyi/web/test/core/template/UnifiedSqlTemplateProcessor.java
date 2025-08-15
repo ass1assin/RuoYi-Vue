@@ -1,11 +1,7 @@
 package com.ruoyi.web.test.core.template;
 
 import com.ruoyi.web.test.core.dialect.DatabaseDialect;
-import com.ruoyi.web.test.core.dialect.DialectRegistry;
 import org.springframework.stereotype.Component;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 @Component

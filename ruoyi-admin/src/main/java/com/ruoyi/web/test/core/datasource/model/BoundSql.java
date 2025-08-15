@@ -20,8 +20,4 @@ public class BoundSql {
     public Object[] getParametersArray() {
         return orderedParameters;
     }
-
-    public Map<String, Object> getParameters() {
-        return parameters;
-    }
 }

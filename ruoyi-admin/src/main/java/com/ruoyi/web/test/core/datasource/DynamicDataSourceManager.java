@@ -1,6 +1,5 @@
 package com.ruoyi.web.test.core.datasource;
 
-
 import com.ruoyi.web.test.core.datasource.model.DataSourceConfig;
 import com.ruoyi.web.test.core.dialect.DatabaseDialect;
 import com.ruoyi.web.test.core.dialect.DatabaseDialectAdapter;
@@ -11,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +25,6 @@ public class DynamicDataSourceManager {
         this.dialectAdapter = dialectAdapter;
     }
     public void addDataSource(DataSourceConfig config) {
-
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(config.getJdbcUrl());
         hikariConfig.setUsername(config.getUsername());
