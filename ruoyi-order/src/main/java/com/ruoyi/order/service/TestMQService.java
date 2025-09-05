@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.ruoyi.mq.constants.RabbitMQConstants.TEST_EXCHANGE;
+import static com.ruoyi.mq.constants.RabbitMQConstants.TEST_ROUTING_KEY;
+
 @Service
 public class TestMQService {
 
@@ -21,7 +24,7 @@ public class TestMQService {
     public void sendTestMessage(String message) {
         System.out.println("[生产者] 准备发送消息: " + message);
         // convertAndSend(String exchange, String routingKey, Object message)
-        rabbitTemplate.convertAndSend(RabbitMQConfig.TEST_EXCHANGE, RabbitMQConfig.TEST_ROUTING_KEY, message);
+        rabbitTemplate.convertAndSend(TEST_EXCHANGE, TEST_ROUTING_KEY, message);
         System.out.println("[生产者] 消息发送完成: " + message);
     }
 

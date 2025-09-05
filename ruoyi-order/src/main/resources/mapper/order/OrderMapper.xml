@@ -7,6 +7,8 @@
     <resultMap type="Order" id="OrderResult">
         <result property="orderId" column="order_id"/>
         <result property="userId" column="user_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="quantity" column="quantity"/>
         <result property="orderNo" column="order_no"/>
         <result property="amount" column="amount"/>
         <result property="status" column="status"/>
@@ -15,18 +17,18 @@
     </resultMap>
 
     <insert id="insertOrder" parameterType="Order" useGeneratedKeys="true" keyProperty="orderId">
-        INSERT INTO t_order(user_id, order_no, amount, status, create_time, update_time)
-        VALUES (#{userId}, #{orderNo}, #{amount}, #{status}, #{createTime}, #{updateTime})
+        INSERT INTO t_order(user_id, product_id, quantity, order_no, amount, status, create_time, update_time)
+        VALUES (#{userId}, #{productId}, #{quantity}, #{orderNo}, #{amount}, #{status}, #{createTime}, #{updateTime})
     </insert>
 
     <select id="selectOrderById" parameterType="Long" resultMap="OrderResult">
-        SELECT order_id, user_id, order_no, amount, status, create_time, update_time
+        SELECT order_id, user_id, product_id, quantity, order_no, amount, status, create_time, update_time
         FROM t_order
         WHERE order_id = #{orderId}
     </select>
 
     <select id="selectOrderByOrderNo" parameterType="String" resultMap="OrderResult">
-        SELECT order_id, user_id, order_no, amount, status, create_time, update_time
+        SELECT order_id, user_id, product_id, quantity, order_no, amount, status, create_time, update_time
         FROM t_order
         WHERE order_no = #{orderNo}
     </select>

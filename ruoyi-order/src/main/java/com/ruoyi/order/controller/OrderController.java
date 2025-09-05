@@ -15,10 +15,7 @@ public class OrderController {
     private IOrderService orderService;
 
     @PostMapping("/create")
-    public Order createOrder(@RequestParam Long userId, @RequestParam BigDecimal amount) {
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setAmount(amount);
+    public Order createOrder(@RequestBody Order order) {
         return orderService.createOrder(order);
     }
 

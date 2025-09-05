@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "com.ruoyi",
         "com.ruoyi.web",
         "com.ruoyi.system",
+        "com.ruoyi.order",
         "com.ruoyi.mock"  // 明确添加 mock 包
 })
 public class RuoYiApplication
