@@ -73,8 +73,6 @@
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-housekeeping</artifactId>
-            <version>3.8.8</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -86,6 +84,18 @@
             <artifactId>ruoyi-contract</artifactId>
             <version>3.8.8</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-mq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-order</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-mock</artifactId>
         </dependency>
 
     </dependencies>

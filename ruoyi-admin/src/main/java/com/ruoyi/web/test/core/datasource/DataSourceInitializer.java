@@ -1,6 +1,7 @@
 package com.ruoyi.web.test.core.datasource;
 
 import com.ruoyi.web.test.core.datasource.model.DataSourceConfig;
+import com.ruoyi.web.test.core.util.TestEncryptUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,7 +21,7 @@ public class DataSourceInitializer {
         this.configJdbcTemplate = configJdbcTemplate;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void initDataSources() {
         System.out.println("===== 开始初始化医院数据源（测试模式） =====");
 
@@ -34,7 +35,10 @@ public class DataSourceInitializer {
             config.setDbType(rs.getString("db_type"));
             config.setJdbcUrl(rs.getString("jdbc_url"));
             config.setUsername(rs.getString("username"));
-            config.setPassword(rs.getString("password")); // 直接使用明文
+            // 解密密码
+            String encryptedPwd = rs.getString("password");
+            String password = TestEncryptUtils.decrypt(encryptedPwd);
+            config.setPassword(password);
             return config;
         });
 

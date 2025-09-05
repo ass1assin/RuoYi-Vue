@@ -47,6 +47,24 @@ user:
 
 # Spring配置
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: 144601
+    virtual-host: /  # 虚拟主机名称
+    publisher-confirm-type: none  # 开启发布确认
+    publisher-return: false  # 开启消息退回
+    listener:
+      simple:
+        acknowledge-mode: none  # 不确认ACK
+        prefetch: 100  # 预取数量
+        retry:
+          enabled: false  # 开启消费者重试
+          max-attempts: 3  # 最大重试次数
+          initial-interval: 5000ms  # 重试间隔
+    template:
+      mandatory: true  # 开启强制消息投递
   # 资源信息
   messages:
     # 国际化资源文件路径

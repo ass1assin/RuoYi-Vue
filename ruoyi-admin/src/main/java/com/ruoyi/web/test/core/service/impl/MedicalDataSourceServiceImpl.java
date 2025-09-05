@@ -1,11 +1,14 @@
 package com.ruoyi.web.test.core.service.impl;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.web.test.core.datasource.DynamicDataSourceManager;
 import com.ruoyi.web.test.core.datasource.SqlTemplateEngine;
 import com.ruoyi.web.test.core.datasource.model.BoundSql;
 import com.ruoyi.web.test.core.datasource.model.SqlTemplate;
 import com.ruoyi.web.test.core.service.MedicalDataSourceService;
 import com.ruoyi.web.test.core.util.DateParamConverter;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -89,6 +92,10 @@ public class MedicalDataSourceServiceImpl implements MedicalDataSourceService {
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(
                 dsManager.getJdbcTemplate(datasource)
         );
+        Long userId = SecurityUtils.getUserId();
+        synchronized (userId.toString().intern()){
+
+        }
         return jdbcTemplate.queryForList(sql, params);
     }
 

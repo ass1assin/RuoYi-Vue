@@ -34,8 +34,8 @@ public class DynamicDataSourceManager {
         // 使用方言获取驱动类名
         DatabaseDialect dialect = dialectAdapter.getDialect(config.getDbType());
         hikariConfig.setDriverClassName(dialect.getDriverClassName());
-        // 存储方言信息
-        dialectMap.put(config.getName(), dialectAdapter.getDialect(config.getDbType()));
+//        // 存储方言信息
+//        dialectMap.put(config.getName(), dialectAdapter.getDialect(config.getDbType()));
         try {
             DataSource dataSource = new HikariDataSource(hikariConfig);
             dataSources.put(config.getName(), dataSource);

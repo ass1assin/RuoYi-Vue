@@ -41,7 +41,7 @@ public class SqlTemplateEngine {
         mybatisConfig.getTypeAliasRegistry().registerAlias("map", Map.class);
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void loadTemplates() {
         try {
             // 确保查询包含hospital_code字段

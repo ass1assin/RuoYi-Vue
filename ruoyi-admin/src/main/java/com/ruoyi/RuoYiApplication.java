@@ -14,6 +14,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author ruoyi
  */
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+// 使用明确的包扫描路径
+@ComponentScan(basePackages = {
+        "com.ruoyi",
+        "com.ruoyi.web",
+        "com.ruoyi.system",
+        "com.ruoyi.mock"  // 明确添加 mock 包
+})
 public class RuoYiApplication
 {
     public static void main(String[] args)
