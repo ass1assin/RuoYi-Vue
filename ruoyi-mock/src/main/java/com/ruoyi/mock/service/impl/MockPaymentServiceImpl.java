@@ -78,8 +78,7 @@ public class MockPaymentServiceImpl implements MockPaymentService {
             new Thread(() -> {
                 try {
                     Thread.sleep(1000); // 模拟处理延迟
-                    ResponseEntity<String> response = restTemplate.postForEntity(
-                            notifyUrl, callbackData, String.class);
+                    ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, callbackData, String.class);
                     System.out.println("回调发送结果: " + response.getStatusCode());
                 } catch (Exception e) {
                     e.printStackTrace();

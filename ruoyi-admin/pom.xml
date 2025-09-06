@@ -95,6 +95,10 @@
         </dependency>
         <dependency>
             <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-payment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-mock</artifactId>
         </dependency>
 
