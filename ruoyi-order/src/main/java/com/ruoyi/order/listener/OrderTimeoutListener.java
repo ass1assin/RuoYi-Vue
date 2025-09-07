@@ -22,20 +22,21 @@ public class OrderTimeoutListener {
      */
     @RabbitListener(queues = ORDER_QUEUE)
     public void handleOrderTimeout(Map<String, Object> message) {
+        //todo 保证可靠性（消息处理过程中抛异常，消息会被RabbitMQ丢弃）
         try {
             System.out.println("[订单超时监听器] 接收到订单超时消息: " + message);
-            
+
             // 获取订单号
             String orderNo = (String) message.get("orderNo");
-            
+
             // 查询订单当前状态
             Order order = orderService.getOrderByOrderNo(orderNo);
-            
+
             if (order == null) {
                 System.out.println("[订单超时监听器] 订单不存在: " + orderNo);
                 return;
             }
-            
+
             // 检查订单状态是否为待支付(CREATED)
             if ("CREATED".equals(order.getStatus())) {
                 // 执行关单操作，更新状态为已超时

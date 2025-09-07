@@ -5,11 +5,18 @@ import com.ruoyi.payment.domain.PaymentRequest;
 import com.ruoyi.payment.domain.PaymentResponse;
 import com.ruoyi.payment.mapper.PaymentMapper;
 import com.ruoyi.payment.service.IPaymentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -33,9 +40,17 @@ public class PaymentServiceImpl implements IPaymentService {
     @Autowired
     private PaymentMapper paymentMapper;
 
+    private static final Logger log = LoggerFactory.getLogger(PaymentServiceImpl.class);
+
     @Override
+    @Retryable(
+            value = {ResourceAccessException.class, DataAccessException.class, Exception.class}, // 重试的异常类型
+    maxAttempts = 3, // 最大重试次数
+    backoff = @Backoff(delay = 1000L, multiplier = 1.5) // 重试间隔：初始1秒， multiplier=1.5表示下次是上次的1.5倍
+    )
     public PaymentResponse processPayment(PaymentRequest paymentRequest) {
-        try {
+        //todo: 预支付补充spring重试
+
             // 构造调用Mock支付平台的请求参数
             Map<String, Object> mockRequest = new HashMap<>();
             mockRequest.put("out_trade_no", paymentRequest.getOrderNo());
@@ -64,11 +79,31 @@ public class PaymentServiceImpl implements IPaymentService {
             }
 
             return paymentResponse;
-        } catch (Exception e) {
-            PaymentResponse paymentResponse = new PaymentResponse();
-            paymentResponse.setSuccess(false);
-            paymentResponse.setMessage("调用支付服务异常: " + e.getMessage());
-            return paymentResponse;
+
+    }
+
+    // 重试全部失败后的降级处理
+    @Recover
+    public PaymentResponse recoverProcessPayment(Exception e, PaymentRequest paymentRequest) {
+        log.error("支付处理最终失败，订单号: {}, 错误信息: {}", paymentRequest.getOrderNo(), e.getMessage());
+
+        PaymentResponse response = new PaymentResponse();
+        response.setSuccess(false);
+        response.setMessage("支付服务暂时不可用，请稍后重试");
+        return response;
+    }
+
+    // 辅助方法：获取当前重试次数（用于日志记录）
+    private int getRetryCount() {
+        // 实际项目中可以通过更复杂的方式获取重试次数
+        // 这里简化处理，只是示意
+        return 1; // 需要更复杂实现来跟踪实际重试次数
+    }
+
+    // 模拟随机故障（测试用）
+    private void simulateRandomFailure() {
+        if (Math.random() < 0.7) { // 70%的概率模拟失败
+            throw new RuntimeException("模拟的随机服务故障");
         }
     }
 

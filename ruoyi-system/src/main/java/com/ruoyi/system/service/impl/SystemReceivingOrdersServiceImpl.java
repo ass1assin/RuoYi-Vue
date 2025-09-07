@@ -52,7 +52,7 @@ public class SystemReceivingOrdersServiceImpl implements ISystemReceivingOrdersS
         return systemReceivingOrdersMapper.selectSystemReceivingOrdersList(systemOrder);
     }
     // 定时任务：每分钟检查一次
-    @Scheduled(cron = "0 * * * * ?")  // 这里的 cron 表达式表示每分钟执行一次
+//    @Scheduled(cron = "0 * * * * ?")  // 这里的 cron 表达式表示每分钟执行一次
     public void checkAndUpdateOrderStatus() {
         // 获取当前时间
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
